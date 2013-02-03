@@ -9,11 +9,14 @@ import com.pi4j.io.i2c.I2CFactory;
 public class LEDTest {
 
 	/**
-	 * @param args
+	 * Main for LED Test
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
 
+		System.out.println("START");
+		final int active_leds = 4;
+		
 		final I2CBus piExtBus = I2CFactory.getInstance(1);
 		
 		final I2CDevice ledDevice = piExtBus.getDevice(0x6e);
@@ -26,8 +29,34 @@ public class LEDTest {
 			ledDevice.write(TLC59116.REG_LEDOUT_x + out_group, PWM_mode);
 		}
 
-		for (int led = 0; led != 4; ++led) {
-			ledDevice.write(TLC59116.REG_PWM_x + led, (byte)200);
+		int pwm = 0;
+		boolean up = true;
+		for (;;) {
+			if (up == true) {
+				// maximum
+				if (pwm == 255) {
+					// stay on maximum and change direction
+					up = !up;
+				}
+				else {
+					++pwm;
+				}
+			}
+			else {
+				// minimum
+				if (pwm == 0) {
+					// stay on minimum and change direction
+					up = !up;
+				}
+				else {
+					--pwm;
+				}
+			}
+
+			// output pwm to all active leds
+			for (int led = 0; led != active_leds; ++led) {
+				ledDevice.write(TLC59116.REG_PWM_x + led, (byte)pwm);
+			}
 		}
 	}
 

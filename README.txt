@@ -58,12 +58,13 @@ LEDTest tests the first 4 LED attached to the TLC59116. It continually changes t
 of current flowing through the LEDs. Over a period of about 2s the LEDs are made brighter and then darker. This cycle
 repeats. To run the test in Java run the following in the Pipin folder:
 
-	java -Djava.library.path -cp lib/pi4j-core-0.0.4.jar:testbin ttree/pipin/i2c/LEDTest
+	java -Djava.library.path=lib -classpath lib/pi4j-core-0.0.4.jar:testbin ttree/pipin/i2c/LEDTest
 
 Now you should see the first 4 LEDS flashing.
 
 In principle this command simple runs the LEDTest class which is in the testbin folder. However because Pipin uses
-the pi4j-core to access the I2C bus
+the pi4j-core to access the I2C bus this also needs to be in the classpath. For this to access the /dev/i2c-1 device it needs
+to use a native Linux library which is also in the "lib" folder.
 
 
 Compiling Pipin

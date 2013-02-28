@@ -2,6 +2,11 @@ package ttree.pipin.i2c;
 
 import java.io.IOException;
 
+/**
+ * Test LEDS driven by TLC59116 attached to I2C bus
+ * 
+ * @author michael
+ */
 public class LEDTest {
 
 	/**
@@ -13,7 +18,7 @@ public class LEDTest {
 		System.out.println("START");
 		final int active_leds = 4;
 		
-		final LEDPWM ledpwm = new LEDPWM(0x6E);
+		final LEDPWM ledpwm = new LEDPWM(0x6F);
 
 		int pwm = 0;
 		boolean up = true;

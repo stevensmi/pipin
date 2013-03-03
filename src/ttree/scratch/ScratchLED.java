@@ -1,4 +1,4 @@
-package scratch;
+package ttree.scratch;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -27,12 +27,12 @@ public class ScratchLED implements RemoteCallback {
 			}
 		}
 		if (address == -1) {
-			log.info("Usage: <address>    where address I2C address on bus 1 of the TCL59116");
+			log.info("Usage: <address>    where address is decimal and the I2C address on bus 1 of the TCL59116");
 			return;
 		}
 		
 		log.info("Accessing TCL59115 on I2C bus 1 address "+ address);
-		final ScratchLED scratchLED = new ScratchLED();
+		final ScratchLED scratchLED = new ScratchLED(address);
 		
 		log.info("Connecting to scratch remote sensor");
 		final RemoteListener listner = new RemoteListener();
@@ -49,8 +49,8 @@ public class ScratchLED implements RemoteCallback {
 		log.info("scratch finished");
 	}
 
-	public ScratchLED() throws IOException {
-		ledpwm = new LEDPWM(0x6E);
+	public ScratchLED(int address) throws IOException {
+		ledpwm = new LEDPWM(address);
 	}
 	
 	public void broadcast(String text) {

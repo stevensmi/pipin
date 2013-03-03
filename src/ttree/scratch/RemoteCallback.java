@@ -1,4 +1,4 @@
-package scratch;
+package ttree.scratch;
 
 /**
  * Callback for remote events

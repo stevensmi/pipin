@@ -1,4 +1,4 @@
-package scratch;
+package ttree.scratch;
 
 import java.util.Scanner;
 import java.util.logging.Logger;

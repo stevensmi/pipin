@@ -15,8 +15,14 @@ public class LEDTest {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		System.out.println("START");
-		final int active_leds = 4;
+		System.out.println("Testing LEDs 0,1,2,3");
+		final boolean active_leds[] = new boolean[] { 
+				true, true, true, true,
+				false, false, false,
+				false, false, false,
+				false, false, false,
+				false, false, false
+		};
 		
 		final LEDPWM ledpwm = new LEDPWM(0x6F);
 
@@ -45,8 +51,10 @@ public class LEDTest {
 			}
 
 			// output pwm to all active leds
-			for (int led = 0; led != active_leds; ++led) {
-				ledpwm.pwm(led, pwm);
+			for (int led = 0; led != active_leds.length; ++led) {
+				if (active_leds[led] == true) {
+					ledpwm.pwm(led, pwm);
+				}
 			}
 		}
 	}

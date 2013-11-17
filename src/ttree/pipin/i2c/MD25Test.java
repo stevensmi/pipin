@@ -43,7 +43,7 @@ public class MD25Test {
 			
 			try {
 				final int value = Integer.parseInt(input);
-				if (value < -127 || value > 128) {
+				if (value < -128 || value > 127) {
 					throw new NumberFormatException();
 				}
 				md25.write(MD25.REG_SPEED1, (byte)value);

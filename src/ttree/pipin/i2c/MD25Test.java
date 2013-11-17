@@ -27,24 +27,29 @@ public class MD25Test {
 		final I2CDevice md25 = piExtBus.getDevice(0x58);
 	
 		int revision = md25.read(MD25.REG_REVISION);
+		
+		System.out.print("MD25 revision " + revision + " ");
+		md25.write(MD25.REG_MODE, (byte)1);
 		int mode = md25.read(MD25.REG_MODE);
-		
-		System.out.println("MD25 revision " + revision + " in mode " + mode);
-		
+		System.out.println("in mode " + mode);
+
 		// open up standard input
 	    final BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
 		for (;;) {
-			System.out.println("MD25 motor 1 speed : ");
+			System.out.print("MD25 motor 1 speed (-128..127) : ");
 			final String input = sin.readLine();
 			if (input.isEmpty() == true)
 				break;
 			
 			try {
-				final Byte value = Byte.valueOf(input);
-				md25.write(MD25.REG_SPEED1, value);
+				final int value = Integer.parseInt(input);
+				if (value < -127 || value > 128) {
+					throw new NumberFormatException();
+				}
+				md25.write(MD25.REG_SPEED1, (byte)value);
 			}
 			catch (NumberFormatException e) {
-				System.err.println("Expecting 0..255\n");
+				System.err.println("Expecting -128..127\n");
 			}
 		}
 	}

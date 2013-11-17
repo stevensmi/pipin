@@ -3,6 +3,10 @@ package ttree.scratch;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.pi4j.io.i2c.I2CBus;
+import com.pi4j.io.i2c.I2CDevice;
+import com.pi4j.io.i2c.I2CFactory;
+
 import ttree.pipin.i2c.LEDPWM;
 
 public class ScratchLED implements RemoteCallback {
@@ -50,7 +54,11 @@ public class ScratchLED implements RemoteCallback {
 	}
 
 	public ScratchLED(int address) throws IOException {
-		ledpwm = new LEDPWM(address);
+		// RPi external I2C bus
+		final I2CBus piExtBus = I2CFactory.getInstance(1);
+		final I2CDevice ledDevice = piExtBus.getDevice(address);
+		
+		ledpwm = new LEDPWM(ledDevice);
 	}
 	
 	public void broadcast(String text) {

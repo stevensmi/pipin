@@ -1,7 +1,7 @@
 package ttree.pipin.i2c;
 
 /**
- * I2C Register definition for the TLC59116 Device
+ * I2C Register definition for the TLC59116 device
  * 
  * The TLC59116 is a I2C interfaced integrated driver for 16 low current LEDs from TI
  *

@@ -2,6 +2,10 @@ package ttree.pipin.i2c;
 
 import java.io.IOException;
 
+import com.pi4j.io.i2c.I2CBus;
+import com.pi4j.io.i2c.I2CDevice;
+import com.pi4j.io.i2c.I2CFactory;
+
 /**
  * Test LEDS driven by TLC59116 attached to I2C bus
  * 
@@ -24,7 +28,12 @@ public class LEDTest {
 				false, false, false
 		};
 		
-		final LEDPWM ledpwm = new LEDPWM(0x6F);
+		// RPi external I2C bus
+		final I2CBus piExtBus = I2CFactory.getInstance(1);
+		// Default address for ELC LED board
+		final I2CDevice ledDevice = piExtBus.getDevice(0x6F);
+		
+		final LEDPWM ledpwm = new LEDPWM(ledDevice);
 
 		int pwm = 0;
 		boolean up = true;

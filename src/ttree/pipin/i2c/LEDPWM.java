@@ -2,9 +2,7 @@ package ttree.pipin.i2c;
 
 import java.io.IOException;
 
-import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
-import com.pi4j.io.i2c.I2CFactory;
 
 /**
  * LED PWM control via TLC59116
@@ -20,12 +18,10 @@ public final class LEDPWM {
 	 * @param address device address on I2C bus 1
 	 * @throws IOException bus or device error
 	 */
-	public LEDPWM(int address) throws IOException {
+	public LEDPWM(I2CDevice ledDevice) throws IOException {
 
-		final I2CBus piExtBus = I2CFactory.getInstance(1);
-		
-		ledDevice = piExtBus.getDevice(address);
-		
+		this.ledDevice = ledDevice;
+
 		for (int led = 0; led != 16; ++led) {
 			ledDevice.write(TLC59116.REG_PWM_x + led, (byte)0);
 		}

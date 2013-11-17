@@ -80,15 +80,8 @@ Software to install
 
 	Java
 	----
-	For Pipin I use the recently release Oracle JDK 8 early access release.
-		https://blogs.oracle.com/java/entry/developer_preview_of_java_se
-	This has the advantage that it is fast and works directly on "Wheezy" and ArchlinuxARM for the RPi. Both of which use
-	the "hard float" ABI which is what is used by this developer preview.
-	Unpack this JDK into a folder named "jdk1.8.0" in you home directory. So that the JDK can be used from the command line
-	it is sufficient to export two environment variables.
-		export JAVA_HOME=~/jdk1.8.0
-		export PATH=$PATH:$JAVA_HOME/bin
-	To make this permanent by adding the lines to you .bash_profile
+	For Pipin I use the recently release Oracle JDK 7 for the Raspberry Pi. Simply install the package 'oracle-java7-jdk'
+	on Raspbian.
 	  
 
 	i2c-tools

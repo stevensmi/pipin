@@ -36,7 +36,7 @@ public class MD25Test {
 		// open up standard input
 	    final BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
 		for (;;) {
-			System.out.print("MD25 motor 1 speed (-128..127) : ");
+			System.out.print("MD25 motor 1 and 2 speed (-128..127) : ");
 			final String input = sin.readLine();
 			if (input.isEmpty() == true)
 				break;
@@ -46,6 +46,7 @@ public class MD25Test {
 				if (value < -128 || value > 127) {
 					throw new NumberFormatException();
 				}
+				md25.write(MD25.REG_SPEED2, (byte)value);
 				md25.write(MD25.REG_SPEED1, (byte)value);
 			}
 			catch (NumberFormatException e) {

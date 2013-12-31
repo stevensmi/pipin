@@ -30,15 +30,15 @@ public class ScratchRobo implements RemoteCallback {
 		int address_tcl59116 = -1;
 		if (args.length == 2) {
 			try {
-				address_md25 = Integer.parseInt(args[0]);
-				address_tcl59116 = Integer.parseInt(args[1]);
+				address_md25 = Integer.parseInt(args[0], 16);
+				address_tcl59116 = Integer.parseInt(args[1], 16);
 			}
 			catch (NumberFormatException nfe) {
 				; // ignore
 			}
 		}
 		if (address_md25 == -1 || address_tcl59116 == -1) {
-			log.info("Usage: <MD25 address> <TCL59116 address> where addresses are decimal and the I2C address on bus 1 of the device");
+			log.info("Usage: <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device");
 			return;
 		}
 		
@@ -68,7 +68,7 @@ public class ScratchRobo implements RemoteCallback {
 		final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
 		final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
 		
-		this.motors = new MD25Motor(device_md25, 1, (byte)1);
+		this.motors = new MD25Motor(device_md25, 1, (byte)3);
 		this.leds = new LEDPWM(device_tcl59116);
 	}
 	

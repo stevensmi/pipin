@@ -36,6 +36,14 @@ public final class MD25Motor {
 	}
 
 	/**
+	 * Kepp the MD25 from stopping the motors automatically by reading the 'mode' register
+	 */
+	public void keepAlive() throws IOException {
+
+		device.read(MD25.REG_MODE);
+	}
+	
+	/**
 	 * Set the motor 1 speed value
 	 * @param speed
 	 * @throws IOException 

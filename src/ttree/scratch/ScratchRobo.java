@@ -75,6 +75,15 @@ public class ScratchRobo implements RemoteCallback {
 	public void broadcast(String text) {
 
 		log.info("broadcast: " + text);
+		
+		if (text.startsWith("MOT") == true) {
+			try {
+				motors.keepAlive();
+			}
+			catch (IOException e) {
+				log.warning("MOT keep alive: " + e.getMessage());
+			}
+		}
 	}
 
 	public void sensor_update(String name, String value) {
@@ -154,7 +163,8 @@ public class ScratchRobo implements RemoteCallback {
 				else {
 					motors.setSpeed2((byte)speed);
 				}
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log.warning("MOT cannot change speed: " + e.getMessage());
 			}
 		}

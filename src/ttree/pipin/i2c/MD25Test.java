@@ -26,7 +26,7 @@ public class MD25Test {
 		// Default address for MD25 board
 		final I2CDevice md25 = piExtBus.getDevice(0x58);
 	
-		int revision = md25.read(MD25.REG_REVISION);
+		int revision = md25.read(MD25.REG_SOFTWARE_REVISION);
 		
 		System.out.print("MD25 revision " + revision + " ");
 		md25.write(MD25.REG_MODE, (byte)1);

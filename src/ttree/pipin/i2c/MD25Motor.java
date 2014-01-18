@@ -24,7 +24,7 @@ public final class MD25Motor {
 
 		this.device = device;
 		
-		int actualRevision = device.read(MD25.REG_REVISION);
+		int actualRevision = device.read(MD25.REG_SOFTWARE_REVISION);
 		if (actualRevision <= revision) {
 			throw new IllegalStateException("MD25 actual revision: " + actualRevision + " below required revision:" + revision);
 		}

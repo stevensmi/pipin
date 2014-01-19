@@ -6,7 +6,7 @@
     <property name="source" value="1.7"/>
     <path id="Pipin.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/pi4j-core-0.0.4.jar"/>
+        <pathelement location="lib/pi4j-core-0.0.5.jar"/>
     </path>
 
 	<target name="init">

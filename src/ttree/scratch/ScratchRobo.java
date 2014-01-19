@@ -92,6 +92,7 @@ public class ScratchRobo implements RemoteCallback {
 		}
 
 		if (text.startsWith("ENC") == true) {
+			log.warning("ENC created");
 			final MD25Encoder md25Encoder = new MD25Encoder(scratchRemote, motors, 500);
 			encoderExecutor.execute(md25Encoder);
 		}

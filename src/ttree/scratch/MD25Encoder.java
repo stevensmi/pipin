@@ -40,7 +40,9 @@ public class MD25Encoder implements Runnable {
 						"sensor-update \"encoder1\" " + String.valueOf(encoder1) + //
 						"sensor-update \"encoder2\" " + String.valueOf(encoder2);
 				scratch.writeLine(update);
-				
+
+				System.out.println(update);
+
 				Thread.sleep(pollMillis);
 			} catch (InterruptedException | IOException e) {
 				; // stop execution

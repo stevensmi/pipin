@@ -37,7 +37,7 @@ public class MD25Encoder implements Runnable {
 				final int encoder2 = md25Motor.encoder2();
 				
 				final String update = //
-						"sensor-update \"encoder1\" " + String.valueOf(encoder1);
+						"sensor-update encoder1 " + String.valueOf(encoder1);
 //						"sensor-update \"encoder2\" " + String.valueOf(encoder2);
 				scratch.writeLine(update);
 

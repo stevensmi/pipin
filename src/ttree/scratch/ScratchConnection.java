@@ -1,6 +1,7 @@
 package ttree.scratch;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -46,6 +47,7 @@ public class ScratchConnection {
 		
 		message.putInt(lineDataSize);
 		message.put(lineData);
+		message.flip();
 		sc.write(message);
 	}
 	
@@ -62,6 +64,7 @@ public class ScratchConnection {
 		}
 		
 		header.flip();
+	
 		int lineLen = header.asIntBuffer().get();
 		final ByteBuffer data = readBytes(lineLen);
 		if (data == null) {
@@ -70,7 +73,9 @@ public class ScratchConnection {
 		}
 		
 		data.flip();
+
 		final CharBuffer line = charset.decode(data);
+		System.out.println(new StringBuilder(line).toString());
 		return new StringBuilder(line).toString();
 	}
 	

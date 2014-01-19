@@ -1,6 +1,8 @@
 package ttree.scratch;
 
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import ttree.pipin.i2c.LEDPWM;
@@ -19,6 +21,9 @@ public class ScratchRobo implements RemoteCallback {
 	
 	final MD25Motor motors;
 	final LEDPWM leds;
+	ScratchConnection scratchRemote;
+	
+	final Executor encoderExecutor = Executors.newSingleThreadExecutor();
 
 	/**
 	 * Main for Scratch remote sensor support
@@ -42,15 +47,16 @@ public class ScratchRobo implements RemoteCallback {
 			return;
 		}
 		
+		log.info("Connecting to scratch remote sensor");
+		final ScratchConnection scratchRemote = new ScratchConnection();
+		
 		// scratch remote parse and sensor output
 		final ScratchRobo scratch = new ScratchRobo(address_md25, address_tcl59116);
-		
-		log.info("Connecting to scratch remote sensor");
-		final RemoteListener listener = new RemoteListener();
-		
+		scratch.scratchRemote = scratchRemote;
+
 		final CommandParser command = new CommandParser();
 		for (;;) {
-			final String line = listener.readLine();
+			final String line = scratchRemote.readLine();
 			if (line == null) {
 				break;
 			}
@@ -83,6 +89,11 @@ public class ScratchRobo implements RemoteCallback {
 			catch (IOException e) {
 				log.warning("MOT keep alive: " + e.getMessage());
 			}
+		}
+
+		if (text.startsWith("ENC") == true) {
+			final MD25Encoder md25Encoder = new MD25Encoder(scratchRemote, motors, 500);
+			encoderExecutor.execute(md25Encoder);
 		}
 	}
 

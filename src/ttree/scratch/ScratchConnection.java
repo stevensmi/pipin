@@ -12,18 +12,21 @@ import java.nio.charset.Charset;
  * 
  * @author Michael Stevens
  */
-public class RemoteListener {
+public class ScratchConnection {
 
 	public static final int SENSOR_PORT = 42001;
 	
 	private static Charset charset = Charset.forName("ISO-8859-1");
 	
-	private SocketChannel sc;
+	/**
+	 * The socket connected to Scratch
+	 */
+	private final SocketChannel sc;
 
 	/**
 	 * Construct sensor socket, blocking to accept a connection
 	 */
-	public RemoteListener() throws IOException {
+	public ScratchConnection() throws IOException {
 
 		sc = SocketChannel.open();
 		
@@ -31,18 +34,19 @@ public class RemoteListener {
 		sc.configureBlocking(true);
 	}
 	
-	private ByteBuffer readBytes(int num) throws IOException {
+	/**
+	 * Write a single line to the sensor socket
+	 * @param outLine
+	 * @throws IOException 
+	 */
+	public void writeLine(String outLine) throws IOException {
+		final ByteBuffer lineData = charset.encode(outLine);
+		final int lineDataSize = lineData.capacity();
+		final ByteBuffer message = ByteBuffer.allocate(4 + lineDataSize);
 		
-		final ByteBuffer buf = ByteBuffer.allocate(num);
-		while (num > 0) {
-			final int bytesRead = sc.read(buf);
-			if (bytesRead == -1) {
-				sc.close();
-				return null;
-			}
-			num -= bytesRead;
-		}
-		return buf;
+		message.putInt(lineDataSize);
+		message.put(lineData);
+		sc.write(message);
 	}
 	
 	/**
@@ -68,6 +72,20 @@ public class RemoteListener {
 		data.flip();
 		final CharBuffer line = charset.decode(data);
 		return new StringBuilder(line).toString();
+	}
+	
+	private ByteBuffer readBytes(int num) throws IOException {
+		
+		final ByteBuffer buf = ByteBuffer.allocate(num);
+		while (num > 0) {
+			final int bytesRead = sc.read(buf);
+			if (bytesRead == -1) {
+				sc.close();
+				return null;
+			}
+			num -= bytesRead;
+		}
+		return buf;
 	}
 	
 }

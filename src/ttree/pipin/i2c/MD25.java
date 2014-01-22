@@ -31,19 +31,19 @@ public class MD25 {
 	public static final int REG_COMMAND				= 0x10;	// R/W  | Used for reset of encoder counts and module address changes
 
 	/* MODES */
-	public static final int MODE_0					= 0x00;	// The meaning of the speed registers is literal speeds in the range of 0 (Full Reverse), 128 (Stop), 255 (Full Forward) (Default Setting).
-	public static final int MODE_1					= 0x01;	// The meaning of the speed registers is literal speeds in the range of -128 (Full Reverse), 0 (Stop), 127 (Full Forward).
-	public static final int MODE_2					= 0x02;	// Speed1 control both motors speed, and speed2 becomes the turn value. Data is in the range of 0 (Full Reverse), 128 (Stop), 255 (Full  Forward).
-	public static final int MODE_3					= 0x03;	// Speed1 control both motors speed, and speed2 becomes the turn value. Data is in the range of -128 (Full Reverse), 0 (Stop), 127 (Full Forward).
+	public static final byte MODE_0					= 0x00;	// The meaning of the speed registers is literal speeds in the range of 0 (Full Reverse), 128 (Stop), 255 (Full Forward) (Default Setting).
+	public static final byte MODE_1					= 0x01;	// The meaning of the speed registers is literal speeds in the range of -128 (Full Reverse), 0 (Stop), 127 (Full Forward).
+	public static final byte MODE_2					= 0x02;	// Speed1 control both motors speed, and speed2 becomes the turn value. Data is in the range of 0 (Full Reverse), 128 (Stop), 255 (Full  Forward).
+	public static final byte MODE_3					= 0x03;	// Speed1 control both motors speed, and speed2 becomes the turn value. Data is in the range of -128 (Full Reverse), 0 (Stop), 127 (Full Forward).
 	 
 	/* COMMANDS */
-	public static final int CMD_ENCODER_RESET		= 0x20;	// Resets the encoder registers to zero
-	public static final int CMD_AUTO_SPEED_DISABLE	= 0x30; // Disables automatic speed regulation
-	public static final int CMD_AUTO_SPEED_ENABLE	= 0x31;	// Enables automatic speed regulation (default)
-	public static final int CMD_TIMEOUT_DISABLE		= 0x32;	// Disables 2 second timeout of motors (Version 2 onwards only)
-	public static final int CMD_TIMEOUT_ENABLE		= 0x33;	// Enables 2 second timeout of motors when no I2C comms (default) (Version 2 onwards only)
-	public static final int CMD_CHANGE_I2C_ADDR_1	= 0xA0;	// 1st in sequence to change I2C address
-	public static final int CMD_CHANGE_I2C_ADDR_2	= 0xAA;	// 2nd in sequence to change I2C address
-	public static final int CMD_CHANGE_I2C_ADDR_3	= 0xA5;	// 3rd in sequence to change I2C address
+	public static final byte CMD_ENCODER_RESET		= 0x20;	// Resets the encoder registers to zero
+	public static final byte CMD_AUTO_SPEED_DISABLE	= 0x30; // Disables automatic speed regulation
+	public static final byte CMD_AUTO_SPEED_ENABLE	= 0x31;	// Enables automatic speed regulation (default)
+	public static final byte CMD_TIMEOUT_DISABLE	= 0x32;	// Disables 2 second timeout of motors (Version 2 onwards only)
+	public static final byte CMD_TIMEOUT_ENABLE		= 0x33;	// Enables 2 second timeout of motors when no I2C comms (default) (Version 2 onwards only)
+	public static final byte CMD_CHANGE_I2C_ADDR_1	= (byte)0xA0;	// 1st in sequence to change I2C address
+	public static final byte CMD_CHANGE_I2C_ADDR_2	= (byte)0xAA;	// 2nd in sequence to change I2C address
+	public static final byte CMD_CHANGE_I2C_ADDR_3	= (byte)0xA5;	// 3rd in sequence to change I2C address
 	 
 }

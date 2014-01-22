@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import ttree.pipin.i2c.LEDPWM;
+import ttree.pipin.i2c.MD25;
 import ttree.pipin.i2c.MD25Motor;
 
 import com.pi4j.io.i2c.I2CBus;
@@ -74,7 +75,7 @@ public class ScratchRobo implements RemoteCallback {
 		final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
 		final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
 		
-		this.motors = new MD25Motor(device_md25, 1, (byte)3);
+		this.motors = new MD25Motor(device_md25, 1, (byte)MD25.MODE_1);
 		this.leds = new LEDPWM(device_tcl59116);
 	}
 	

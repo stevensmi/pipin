@@ -88,6 +88,7 @@ public class ScratchRemoteProtocol {
 	 * @return broadcast line
 	 */
 	public String generateBroadcast(String broadcast) {
+		logOut.info(broadcast);
 		return BROADCAST + quoteIfWs(broadcast);
 	}
 	
@@ -97,6 +98,8 @@ public class ScratchRemoteProtocol {
 	 * @return update line
 	 */
 	public String generateSensorUpdate(String... updates) {
+		logOut.info(Arrays.toString(updates));
+		
 		final StringBuilder sb = new StringBuilder(SENSOR_UPDATE);
 		final ListIterator<String> upIt = Arrays.asList(updates).listIterator();
 		if (upIt.hasNext() == true) {
@@ -116,8 +119,8 @@ public class ScratchRemoteProtocol {
 			return "\"" + text + "\"";
 		}
 		else {
-			return text;		}
-		
+			return text;
+		}
 	}
 	
 	private String quotedText(Scanner scanner) {

@@ -80,8 +80,6 @@ public class ScratchRobo implements RemoteCallback {
 	
 	public void broadcast(String text) {
 
-		log.info("broadcast: " + text);
-		
 		if (text.startsWith("MOT") == true) {
 			try {
 				motors.keepAlive();
@@ -100,7 +98,6 @@ public class ScratchRobo implements RemoteCallback {
 
 	public void sensor_update(String name, String value) {
 		
-		log.info("sensor-update: " + name + "=" + value);
 		if (name.startsWith("LED") == true) {
 			int led;
 			try {

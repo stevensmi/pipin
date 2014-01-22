@@ -38,6 +38,7 @@ public class MD25Encoder implements Runnable {
 				final int encoder2 = md25Motor.encoder2();
 				
 				final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
+				System.out.println(updateLine);
 				scratch.writeLine(updateLine);
 
 				Thread.sleep(pollMillis);

@@ -74,7 +74,6 @@ public class ScratchConnection {
 		data.flip();
 
 		final CharBuffer line = charset.decode(data);
-		System.out.println(new StringBuilder(line).toString());
 		return new StringBuilder(line).toString();
 	}
 	

@@ -54,7 +54,7 @@ public class ScratchRobo implements RemoteCallback {
 		final ScratchRobo scratch = new ScratchRobo(address_md25, address_tcl59116);
 		scratch.scratchRemote = scratchRemote;
 
-		final CommandParser command = new CommandParser();
+		final ScratchRemoteProtocol command = new ScratchRemoteProtocol();
 		for (;;) {
 			final String line = scratchRemote.readLine();
 			if (line == null) {

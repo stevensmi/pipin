@@ -1,16 +1,18 @@
 package ttree.scratch;
 
+import java.util.Arrays;
+import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
- * Parse the Scratch remote commands
+ * Parse and generate the Scratch remote protocol
  * The broadcast and sensor-update are parsed
  *  
  * @author Michael Stevens
  */
-public class CommandParser {
+public class ScratchRemoteProtocol {
 	
 	public static final String BROADCAST = "broadcast ";
 	public static final String SENSOR_UPDATE = "sensor-update ";
@@ -20,12 +22,13 @@ public class CommandParser {
 	
 	private static final Pattern quotePattern = Pattern.compile("\"");
 	
-	final Logger log = Logger.getLogger("Scratch remote command parser");
+	final Logger logIn = Logger.getLogger("FromScratch");
+	final Logger logOut = Logger.getLogger("ToScratch");
 
 	/**
 	 * Construct
 	 */
-	public CommandParser() {
+	public ScratchRemoteProtocol() {
 	}
 	
 	/**
@@ -35,7 +38,7 @@ public class CommandParser {
 	 */
 	public void parse(String line, RemoteCallback remoteCallback) {
 		
-		log.fine(line);
+		logIn.info(line);
 		
 		if (line.startsWith(BROADCAST) == true) {
 			// single broadcast
@@ -46,7 +49,7 @@ public class CommandParser {
 				remoteCallback.broadcast(text);
 			}
 			else {
-				log.warning(line);
+				logIn.warning(BROADCAST + " expecting string in: " + line);
 			}
 		}
 		else if (line.startsWith(SENSOR_UPDATE) == true) {
@@ -62,13 +65,14 @@ public class CommandParser {
 				}
 				String afterName = quotedText(scanner);
 				if (afterName == null) {
-					log.warning(line);
+					logIn.warning(SENSOR_UPDATE + " expecting string after: " + name + " in: " + line);
+					break;
 				}
 				
 				final Scanner valueScanner = new Scanner(afterName);
-				final String value = wsText(valueScanner);
+				final String value = wsDelimitedText(valueScanner);
 				if (value == null) {
-					log.warning(line);
+					logIn.warning(SENSOR_UPDATE + " expecting value after: " + name + " in: " + line);
 				}
 				remoteCallback.sensor_update(name, value);
 			}
@@ -78,6 +82,44 @@ public class CommandParser {
 		}
 	}
 
+	/**
+	 * Generate the line for a single broadcast value
+	 * @param broadcast
+	 * @return broadcast line
+	 */
+	public String generateBroadcast(String broadcast) {
+		return BROADCAST + quoteIfWs(broadcast);
+	}
+	
+	/**
+	 * Generate the line for a list of sensor updates
+	 * @param updates - assumed to be pairs of name, values
+	 * @return update line
+	 */
+	public String generateSensorUpdate(String... updates) {
+		final StringBuilder sb = new StringBuilder(SENSOR_UPDATE);
+		final ListIterator<String> upIt = Arrays.asList(updates).listIterator();
+		if (upIt.hasNext() == true) {
+			while (true) {
+				sb.append(quoteIfWs(upIt.next()));
+				if (upIt.hasNext() == false)
+					break;
+				sb.append(" ");
+			}
+		}
+		return sb.toString();
+	}
+	
+	private String quoteIfWs(String text) {
+		final Scanner scanner = new Scanner(text);
+		if (wsDelimitedText(scanner) == null) {
+			return "\"" + text + "\"";
+		}
+		else {
+			return text;		}
+		
+	}
+	
 	private String quotedText(Scanner scanner) {
 		scanner.useDelimiter(quotePattern);
 		// not quoted
@@ -87,7 +129,7 @@ public class CommandParser {
 		return scanner.next();
 	}
 	
-	private String wsText(Scanner scanner) {
+	private String wsDelimitedText(Scanner scanner) {
 		scanner.reset();
 		// no ws
 		if (scanner.hasNext() == false) {

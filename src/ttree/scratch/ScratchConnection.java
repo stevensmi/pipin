@@ -1,7 +1,6 @@
 package ttree.scratch;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

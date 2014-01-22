@@ -15,6 +15,8 @@ public class MD25Encoder implements Runnable {
 	private final MD25Motor md25Motor;
 	private final int pollMillis;
 	
+	private final ScratchRemoteProtocol remoteProtocol = new ScratchRemoteProtocol();
+	
 	/**
 	 * Construct with polling delay
 	 * @param scratch
@@ -27,7 +29,6 @@ public class MD25Encoder implements Runnable {
 		this.pollMillis = pollMillis;
 	}
 
-
 	@Override
 	public void run() {
 		while (true) {
@@ -36,12 +37,8 @@ public class MD25Encoder implements Runnable {
 				final int encoder1 = md25Motor.encoder1();
 				final int encoder2 = md25Motor.encoder2();
 				
-				final String update = //
-						"sensor-update encoder1 " + String.valueOf(encoder1);
-//						"sensor-update \"encoder2\" " + String.valueOf(encoder2);
-				scratch.writeLine(update);
-
-				System.out.println(update);
+				final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
+				scratch.writeLine(updateLine);
 
 				Thread.sleep(pollMillis);
 			} catch (InterruptedException | IOException e) {

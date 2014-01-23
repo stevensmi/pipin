@@ -22,13 +22,13 @@ import com.pi4j.io.i2c.I2CFactory;
 public class ScratchRobo implements RemoteCallback {
 
 	final static Logger log = Logger.getLogger("ScratchRobo");
-	
+
 	ScratchConnection scratchRemote;
 
 	final MD25Motor motors;
 	final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<Integer>(2);
 	final LEDPWM leds;
-	
+
 	final ExecutorService encoderExecutor = Executors.newSingleThreadExecutor();
 	Future<?> encoderTask = null;
 
@@ -52,7 +52,7 @@ public class ScratchRobo implements RemoteCallback {
 			log.info("Usage: <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device");
 			return;
 		}
-		
+
 		log.info("Connecting to scratch remote sensor");
 		final ScratchConnection scratchRemote;
 		try {
@@ -63,7 +63,7 @@ public class ScratchRobo implements RemoteCallback {
 			System.exit(1);	// signal no connection to scratch
 			return;
 		}
-		
+
 		// scratch remote parse and sensor output
 		final ScratchRobo self;
 		try {
@@ -87,7 +87,7 @@ public class ScratchRobo implements RemoteCallback {
 			if (line == null) {
 				break;
 			}
-			
+
 			command.parse(line, self);
 		}
 		log.info("scratch finished");
@@ -96,16 +96,16 @@ public class ScratchRobo implements RemoteCallback {
 	public ScratchRobo(int address_md25, int address_tcl59116) throws IOException {
 		// RPi external I2C bus
 		final I2CBus piExtBus = I2CFactory.getInstance(1);
-		
+
 		// Devices
 		final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
 		final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
-		
+
 		this.motors = new MD25Motor(device_md25, 1, (byte)MD25.MODE_1);
-//		this.motors.setAccelRate((byte)0);
+		this.motors.setAccelRate((byte)10);
 		this.leds = new LEDPWM(device_tcl59116);
 	}
-	
+
 	public void broadcast(String text) {
 
 		@SuppressWarnings("resource")
@@ -113,7 +113,7 @@ public class ScratchRobo implements RemoteCallback {
 		if (textScanner.hasNext() == false) {
 			log.warning("empty broadcast");
 		}
-		
+
 		final String what = textScanner.next();
 		switch (what) {
 		case "MOT":
@@ -128,14 +128,15 @@ public class ScratchRobo implements RemoteCallback {
 		case "ENC":
 			final int poll;
 			if (textScanner.hasNextInt() == true) {
-				 poll = textScanner.nextInt();
-					final MD25Encoder md25Encoder = new MD25Encoder(scratchRemote, motors, poll, positionDemand);
-					// cancel previous task
-					if (encoderTask != null) {
-						encoderTask.cancel(true);
-					}
-					encoderTask = encoderExecutor.submit(md25Encoder);
-					log.info("ENC motor encoders are being polled every " + poll + "ms");
+				poll = textScanner.nextInt();
+				boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
+				final MD25Encoder md25Encoder = new MD25Encoder((sensorUpdates ? scratchRemote : null), motors, poll, positionDemand);
+				// cancel previous task
+				if (encoderTask != null) {
+					encoderTask.cancel(true);
+				}
+				encoderTask = encoderExecutor.submit(md25Encoder);
+				log.info("ENC motor encoders are being polled every " + poll + "ms");
 			} else {
 				if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
 					if (encoderTask != null) {
@@ -155,7 +156,7 @@ public class ScratchRobo implements RemoteCallback {
 	}
 
 	public void sensor_update(String name, String value) {
-		
+
 		if (name.startsWith("LED") == true) {
 			int led;
 			try {
@@ -165,12 +166,12 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("LED number format: " + name);
 				return;
 			}
-			
+
 			if (led < 1 || led > 16) {
 				log.warning("LED number range 1..16: " + name);
 				return;
 			}
-			
+
 			int ledValue;
 			try {
 				ledValue = Integer.parseInt(value);
@@ -179,7 +180,7 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("LED value format: " + value);
 				return;
 			}
-			
+
 			// saturate led value
 			if (ledValue < 0) {
 				ledValue = 0;
@@ -188,7 +189,7 @@ public class ScratchRobo implements RemoteCallback {
 					ledValue = 255;
 				}
 			}
-			
+
 			// everything validated - change the led PWM value
 			try {
 				leds.pwm(led-1, ledValue);
@@ -206,12 +207,12 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("MOT number format: " + name);
 				return;
 			}
-			
+
 			if (motor < 1 || motor > 2) {
 				log.warning("MOT number range 1..2: " + name);
 				return;
 			}
-			
+
 			int speed;
 			try {
 				speed = Integer.parseInt(value);
@@ -220,14 +221,14 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("MOT expecting integer as speed: " + value);
 				return;
 			}
-			
+
 			// saturate speed
 			if (speed < -128) {
 				speed = 128;
 			} else if (speed > 127) {
 				speed = 127;
 			}
-			
+
 			// everything validated - change the motor speed
 			try {
 				if (motor == 1) {
@@ -255,12 +256,12 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("POS number format: " + name);
 				return;
 			}
-			
+
 			if (motor < 1 || motor > 2) {
 				log.warning("POS number range 1..2: " + name);
 				return;
 			}
-			
+
 			int position;
 			try {
 				position = Integer.parseInt(value);
@@ -269,10 +270,10 @@ public class ScratchRobo implements RemoteCallback {
 				log.warning("MOT expecting integer as position: " + value);
 				return;
 			}
-			
+
 			// everything validated - change the demand position speed
 			positionDemand.set(motor-1, position);
 		}
 	}
-	
+
 }

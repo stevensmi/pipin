@@ -8,6 +8,7 @@ import ttree.pipin.i2c.MD25Motor;
 
 /**
  * Poll the MD25 encoders and send sensor_update
+ * Provides position control using encoder readings
  * 
  * @author Michael Stevens
  */
@@ -23,8 +24,8 @@ public class MD25Encoder implements Runnable {
 	private final ScratchRemoteProtocol remoteProtocol = new ScratchRemoteProtocol();
 	
 	/**
-	 * Construct with polling delay
-	 * @param scratch
+	 * Construct regular encoder reading with polling delay
+	 * @param scratch	scratch connection for sensor updates or null if only 
 	 * @param md25Motor
 	 * @param poleMillis
 	 */
@@ -71,23 +72,22 @@ public class MD25Encoder implements Runnable {
 		while (true) {
 			
 			try {
-				// read encoders
-				long startRead = System.nanoTime();
+				// read encoders and update position control
 				final int encoder1 = md25Motor.encoder1();
-				final int encoder2 = md25Motor.encoder2();
-				long endRead = System.nanoTime();
-				log.info("At: " + startRead + " read duration: " + (endRead - startRead));
-				
-				// position control using encoders
 				position(1, encoder1);
+				final int encoder2 = md25Motor.encoder2();
 				position(2, encoder2);
 				
-//				final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
-//				scratch.writeLine(updateLine);
+				// send sensor update to scratch 
+				if (scratch != null) {
+					final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
+					scratch.writeLine(updateLine);
+				}
 
 				Thread.sleep(pollMillis);
 			} catch (IOException e) {
 				log.severe("MD25 encoder reading error: " + e.getMessage());
+				break;
 			} catch (InterruptedException e) {
 				// stop execution
 			}

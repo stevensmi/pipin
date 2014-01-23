@@ -34,7 +34,6 @@ public final class MD25Motor {
 			throw new IllegalArgumentException("MD25 mode must be 0..3");
 		}
 		device.write(REG_MODE, mode);
-		device.write(MD25.REG_COMMAND, CMD_AUTO_SPEED_DISABLE);
 	}
 
 	/**

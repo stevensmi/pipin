@@ -30,6 +30,8 @@ public class MD25Encoder implements Runnable {
 	 * @param poleMillis
 	 */
 	public MD25Encoder(ScratchConnection scratch, MD25Motor md25Motor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
+		log.info("scratch: " + scratch);
+
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}

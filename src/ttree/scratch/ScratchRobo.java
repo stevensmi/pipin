@@ -130,7 +130,6 @@ public class ScratchRobo implements RemoteCallback {
 			if (textScanner.hasNextInt() == true) {
 				poll = textScanner.nextInt();
 				boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
-				log.info("UPDATE: " + sensorUpdates);
 				final MD25Encoder md25Encoder = new MD25Encoder((sensorUpdates ? scratchRemote : null), motors, poll, positionDemand);
 				// cancel previous task
 				if (encoderTask != null && encoderTask.isDone() == false) {

@@ -20,7 +20,6 @@ public class ScratchRemoteProtocol {
 	private static final int SENSOR_UPDATE_LEN = SENSOR_UPDATE.length();
 	
 	final Logger logIn = Logger.getLogger("FromScratch");
-	final Logger logOut = Logger.getLogger("ToScratch");
 
 	/**
 	 * Construct
@@ -85,7 +84,6 @@ public class ScratchRemoteProtocol {
 	 * @return broadcast line
 	 */
 	public String generateBroadcast(String broadcast) {
-		logOut.info(broadcast);
 		return BROADCAST + TextParsing.quoteIfWs(broadcast);
 	}
 	
@@ -95,7 +93,6 @@ public class ScratchRemoteProtocol {
 	 * @return update line
 	 */
 	public String generateSensorUpdate(String... updates) {
-		logOut.info(Arrays.toString(updates));
 		
 		final StringBuilder sb = new StringBuilder(SENSOR_UPDATE);
 		final ListIterator<String> upIt = Arrays.asList(updates).listIterator();

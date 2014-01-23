@@ -34,9 +34,8 @@ public class ScratchRobo implements RemoteCallback {
 
 	/**
 	 * Main for Scratch remote sensor support
-	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		int address_md25 = -1;
 		int address_tcl59116 = -1;
@@ -55,20 +54,41 @@ public class ScratchRobo implements RemoteCallback {
 		}
 		
 		log.info("Connecting to scratch remote sensor");
-		final ScratchConnection scratchRemote = new ScratchConnection();
+		final ScratchConnection scratchRemote;
+		try {
+			scratchRemote = new ScratchConnection();
+		}
+		catch (IOException e) {
+			log.warning("No connection to scratch remote sensor: " + e.getMessage());
+			System.exit(1);	// signal no connection to scratch
+			return;
+		}
 		
 		// scratch remote parse and sensor output
-		final ScratchRobo scratch = new ScratchRobo(address_md25, address_tcl59116);
-		scratch.scratchRemote = scratchRemote;
+		final ScratchRobo self;
+		try {
+			self = new ScratchRobo(address_md25, address_tcl59116);
+		} catch (IOException e) {
+			log.warning("Cannot connect to i2c sensor: " + e.getMessage());
+			System.exit(2);	// signal no connection to i2c
+			return;
+		}
+		self.scratchRemote = scratchRemote;
 
 		final ScratchRemoteProtocol command = new ScratchRemoteProtocol();
 		for (;;) {
-			final String line = scratchRemote.readLine();
+			String line;
+			try {
+				line = scratchRemote.readLine();
+			} catch (IOException e) {
+				log.warning("Connection to scratch remote sensor lost: " + e.getMessage());
+				break;
+			}
 			if (line == null) {
 				break;
 			}
 			
-			command.parse(line, scratch);
+			command.parse(line, self);
 		}
 		log.info("scratch finished");
 	}

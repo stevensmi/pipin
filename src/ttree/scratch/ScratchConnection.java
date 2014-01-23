@@ -59,6 +59,7 @@ public class ScratchConnection {
 		
 		final ByteBuffer header = readBytes(4);
 		if (header == null) {
+			sc.close();
 			return null;
 		}
 		

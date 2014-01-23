@@ -91,7 +91,7 @@ public class MD25Encoder implements Runnable {
 				log.severe("MD25 encoder reading error: " + e.getMessage());
 				break;
 			} catch (InterruptedException e) {
-				log.info("MD25 encoder STOPPED");
+				break;
 			}
 		}
 	}

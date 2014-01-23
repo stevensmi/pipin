@@ -82,6 +82,7 @@ public class ScratchRobo implements RemoteCallback {
 		final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
 		
 		this.motors = new MD25Motor(device_md25, 1, (byte)MD25.MODE_1);
+		this.motors.setAccelRate((byte)0);
 		this.leds = new LEDPWM(device_tcl59116);
 	}
 	
@@ -118,8 +119,7 @@ public class ScratchRobo implements RemoteCallback {
 			} else {
 				if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
 					if (encoderTask != null) {
-						boolean canceled = encoderTask.cancel(true);
-						log.info("ENC canceled: " + canceled);
+						encoderTask.cancel(true);
 						encoderTask = null;
 					}
 					log.info("ENC motor encoders are OFF");

@@ -72,8 +72,11 @@ public class MD25Encoder implements Runnable {
 			
 			try {
 				// read encoders
+				long startRead = System.nanoTime();
 				final int encoder1 = md25Motor.encoder1();
 				final int encoder2 = md25Motor.encoder2();
+				long endRead = System.nanoTime();
+				log.info("At: " + startRead + " read duration: " + (endRead - startRead));
 				
 				// position control using encoders
 				position(1, encoder1);
@@ -83,9 +86,10 @@ public class MD25Encoder implements Runnable {
 //				scratch.writeLine(updateLine);
 
 				Thread.sleep(pollMillis);
-			} catch (InterruptedException | IOException e) {
+			} catch (IOException e) {
+				log.severe("MD25 encoder reading error: " + e.getMessage());
+			} catch (InterruptedException e) {
 				// stop execution
-				log.severe("MD25 encoder reading stopped: " + e.getMessage());
 			}
 		}
 	}

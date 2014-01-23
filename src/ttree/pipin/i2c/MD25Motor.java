@@ -65,6 +65,16 @@ public final class MD25Motor {
 	}
 	
 	/**
+	 * Set the maximum accelerationRate
+	 * @param accelerationRate
+	 * @throws IOException 
+	 */
+	public void setAccelRate(byte accelerationRate) throws IOException {
+
+		device.write(REG_ACCELERATION_RATE, accelerationRate);
+	}
+	
+	/**
 	 * Encoder for the motor 1
 	 * @return encoder count
 	 * @throws IOException

@@ -117,7 +117,7 @@ public class ScratchRobo implements RemoteCallback {
 					log.info("ENC motor encoders are being polled every " + poll + "ms");
 			} else {
 				if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
-					if (encoderExecutor != null) {
+					if (encoderTask != null) {
 						encoderTask.cancel(true);
 						encoderTask = null;
 					}

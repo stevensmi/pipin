@@ -15,11 +15,11 @@ public class MD25Encoder implements Runnable {
 
 	final static Logger log = Logger.getLogger("MD25Encoder");
 	
-	private final ScratchConnection scratch;
 	private final MD25Motor md25Motor;
 	private final int pollMillis;
 	private final AtomicReferenceArray<Integer> positionDemand;
 	
+	private final ScratchConnection scratch;
 	private final ScratchRemoteProtocol remoteProtocol = new ScratchRemoteProtocol();
 	
 	/**
@@ -79,8 +79,8 @@ public class MD25Encoder implements Runnable {
 				position(1, encoder1);
 				position(2, encoder2);
 				
-				final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
-				scratch.writeLine(updateLine);
+//				final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
+//				scratch.writeLine(updateLine);
 
 				Thread.sleep(pollMillis);
 			} catch (InterruptedException | IOException e) {

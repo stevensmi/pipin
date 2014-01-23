@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Parse and generate the Scratch remote protocol
@@ -19,8 +18,6 @@ public class ScratchRemoteProtocol {
 
 	private static final int BROADCAST_LEN = BROADCAST.length();
 	private static final int SENSOR_UPDATE_LEN = SENSOR_UPDATE.length();
-	
-	private static final Pattern quotePattern = Pattern.compile("\"");
 	
 	final Logger logIn = Logger.getLogger("FromScratch");
 	final Logger logOut = Logger.getLogger("ToScratch");
@@ -44,7 +41,7 @@ public class ScratchRemoteProtocol {
 			// single broadcast
 			final Scanner scanner = new Scanner(line.substring(BROADCAST_LEN));
 
-			final String text = quotedText(scanner);
+			final String text = TextParsing.quotedText(scanner);
 			if (text != null) {
 				remoteCallback.broadcast(text);
 			}
@@ -59,18 +56,18 @@ public class ScratchRemoteProtocol {
 			final Scanner scanner = new Scanner(changes);
 			
 			while (true) {
-				final String name = quotedText(scanner);
+				final String name = TextParsing.quotedText(scanner);
 				if (name == null) {
 					break;
 				}
-				String afterName = quotedText(scanner);
+				String afterName = TextParsing.quotedText(scanner);
 				if (afterName == null) {
 					logIn.warning(SENSOR_UPDATE + " expecting string after: " + name + " in: " + line);
 					break;
 				}
 				
 				final Scanner valueScanner = new Scanner(afterName);
-				final String value = wsDelimitedText(valueScanner);
+				final String value = TextParsing.nextText(valueScanner);
 				if (value == null) {
 					logIn.warning(SENSOR_UPDATE + " expecting value after: " + name + " in: " + line);
 				}
@@ -89,7 +86,7 @@ public class ScratchRemoteProtocol {
 	 */
 	public String generateBroadcast(String broadcast) {
 		logOut.info(broadcast);
-		return BROADCAST + quoteIfWs(broadcast);
+		return BROADCAST + TextParsing.quoteIfWs(broadcast);
 	}
 	
 	/**
@@ -104,41 +101,13 @@ public class ScratchRemoteProtocol {
 		final ListIterator<String> upIt = Arrays.asList(updates).listIterator();
 		if (upIt.hasNext() == true) {
 			while (true) {
-				sb.append(quoteIfWs(upIt.next()));
+				sb.append(TextParsing.quoteIfWs(upIt.next()));
 				if (upIt.hasNext() == false)
 					break;
 				sb.append(" ");
 			}
 		}
 		return sb.toString();
-	}
-	
-	private String quoteIfWs(String text) {
-		final Scanner scanner = new Scanner(text);
-		if (wsDelimitedText(scanner) == null) {
-			return "\"" + text + "\"";
-		}
-		else {
-			return text;
-		}
-	}
-	
-	private String quotedText(Scanner scanner) {
-		scanner.useDelimiter(quotePattern);
-		// not quoted
-		if (scanner.hasNext() == false) {
-			return null;
-		}
-		return scanner.next();
-	}
-	
-	private String wsDelimitedText(Scanner scanner) {
-		scanner.reset();
-		// no ws
-		if (scanner.hasNext() == false) {
-			return null;
-		}
-		return scanner.next();
 	}
 	
 }

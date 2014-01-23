@@ -1,8 +1,11 @@
 package ttree.scratch;
 
 import java.io.IOException;
-import java.util.concurrent.Executor;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.logging.Logger;
 
 import ttree.pipin.i2c.LEDPWM;
@@ -20,11 +23,14 @@ public class ScratchRobo implements RemoteCallback {
 
 	final static Logger log = Logger.getLogger("ScratchRobo");
 	
-	final MD25Motor motors;
-	final LEDPWM leds;
 	ScratchConnection scratchRemote;
+
+	final MD25Motor motors;
+	final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<Integer>(2);
+	final LEDPWM leds;
 	
-	final Executor encoderExecutor = Executors.newSingleThreadExecutor();
+	final ExecutorService encoderExecutor = Executors.newSingleThreadExecutor();
+	Future<?> encoderTask = null;
 
 	/**
 	 * Main for Scratch remote sensor support
@@ -81,19 +87,49 @@ public class ScratchRobo implements RemoteCallback {
 	
 	public void broadcast(String text) {
 
-		if (text.startsWith("MOT") == true) {
+		@SuppressWarnings("resource")
+		final Scanner textScanner = new Scanner(text);
+		if (textScanner.hasNext() == false) {
+			log.warning("empty broadcast");
+		}
+		
+		final String what = textScanner.next();
+		switch (what) {
+		case "MOT":
 			try {
 				motors.keepAlive();
 			}
 			catch (IOException e) {
 				log.warning("MOT keep alive: " + e.getMessage());
 			}
-		}
+			break;
 
-		if (text.startsWith("ENC") == true) {
-			log.warning("ENC created");
-			final MD25Encoder md25Encoder = new MD25Encoder(scratchRemote, motors, 500);
-			encoderExecutor.execute(md25Encoder);
+		case "ENC":
+			final int poll;
+			if (textScanner.hasNextInt() == true) {
+				 poll = textScanner.nextInt();
+					final MD25Encoder md25Encoder = new MD25Encoder(scratchRemote, motors, poll, positionDemand);
+					// cancel previous task
+					if (encoderTask != null) {
+						encoderTask.cancel(true);
+					}
+					encoderTask = encoderExecutor.submit(md25Encoder);
+					log.info("ENC motor encoders are being polled every " + poll + "ms");
+			} else {
+				if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
+					if (encoderExecutor != null) {
+						encoderTask.cancel(true);
+						encoderTask = null;
+					}
+					log.info("ENC motor encoders are OFF");
+				}
+				else {
+					log.warning("ENC ignored, expecting integer poll interval or OFF");
+				}
+			}
+			break;
+		default:
+			// ignore unknown broadcast
 		}
 	}
 
@@ -123,9 +159,13 @@ public class ScratchRobo implements RemoteCallback {
 				return;
 			}
 			
-			if (ledValue < 0 || ledValue > 255) {
-				log.warning("LED value range 0..255: " + value);
-				return;
+			// saturate led value
+			if (ledValue < 0) {
+				ledValue = 0;
+			} else {
+				if (ledValue > 255) {
+					ledValue = 255;
+				}
 			}
 			
 			// everything validated - change the led PWM value
@@ -136,7 +176,7 @@ public class ScratchRobo implements RemoteCallback {
 			}
 		}
 
-		if (name.startsWith("MOT") == true) {
+		else if (name.startsWith("MOT") == true) {
 			int motor;
 			try {
 				motor = Integer.parseInt(name.substring(3));
@@ -156,13 +196,15 @@ public class ScratchRobo implements RemoteCallback {
 				speed = Integer.parseInt(value);
 			}
 			catch (NumberFormatException nfe) {
-				log.warning("LED value format: " + value);
+				log.warning("MOT expecting integer as speed: " + value);
 				return;
 			}
 			
-			if (speed < -128 || speed > 127) {
-				log.warning("MOT speed range -128..127: " + value);
-				return;
+			// saturate speed
+			if (speed < -128) {
+				speed = 128;
+			} else if (speed > 127) {
+				speed = 127;
 			}
 			
 			// everything validated - change the motor speed
@@ -173,12 +215,43 @@ public class ScratchRobo implements RemoteCallback {
 				else {
 					motors.setSpeed2((byte)speed);
 				}
+
+				// speed set, disable position demand
+				positionDemand.set(motor-1, null);
+
 			}
 			catch (IOException e) {
 				log.warning("MOT cannot change speed: " + e.getMessage());
 			}
 		}
 
+		else if (name.startsWith("POS") == true) {
+			int motor;
+			try {
+				motor = Integer.parseInt(name.substring(3));
+			}
+			catch (NumberFormatException nfe) {
+				log.warning("POS number format: " + name);
+				return;
+			}
+			
+			if (motor < 1 || motor > 2) {
+				log.warning("POS number range 1..2: " + name);
+				return;
+			}
+			
+			int position;
+			try {
+				position = Integer.parseInt(value);
+			}
+			catch (NumberFormatException nfe) {
+				log.warning("MOT expecting integer as position: " + value);
+				return;
+			}
+			
+			// everything validated - change the demand position speed
+			positionDemand.set(motor-1, position);
+		}
 	}
 	
 }

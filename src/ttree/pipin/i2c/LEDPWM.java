@@ -7,6 +7,8 @@ import com.pi4j.io.i2c.I2CDevice;
 /**
  * LED PWM control via TLC59116
  * 
+ * I2C reads and writes are synchronized to allow thread safe access
+ * 
  * @author Michael Stevens
  */
 public final class LEDPWM {
@@ -42,7 +44,7 @@ public final class LEDPWM {
 	 * @param value
 	 * @throws IOException device error
 	 */
-	public void pwm(int led, int value) throws IOException {
+	public synchronized void pwm(int led, int value) throws IOException {
 		if (led < 0 || led > 15) {
 			throw new IllegalArgumentException("led range 0..15 " + led);
 		}

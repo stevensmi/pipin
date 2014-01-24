@@ -8,6 +8,8 @@ import static ttree.pipin.i2c.MD25.*;
 /**
  * Dual Motor control via MD25
  * 
+ * I2C reads and writes are synchronized to allow thread safe access
+ * 
  * @author Michael Stevens
  */
 public final class MD25Motor {
@@ -39,7 +41,7 @@ public final class MD25Motor {
 	/**
 	 * Kepp the MD25 from stopping the motors automatically by reading the 'mode' register
 	 */
-	public void keepAlive() throws IOException {
+	public synchronized void keepAlive() throws IOException {
 
 		device.read(REG_MODE);
 	}
@@ -49,7 +51,7 @@ public final class MD25Motor {
 	 * @param speed
 	 * @throws IOException 
 	 */
-	public void setSpeed1(byte speed) throws IOException {
+	public synchronized void setSpeed1(byte speed) throws IOException {
 
 		device.write(REG_SPEED1, speed);
 	}
@@ -59,7 +61,7 @@ public final class MD25Motor {
 	 * @param speed
 	 * @throws IOException 
 	 */
-	public void setSpeed2(byte speed) throws IOException {
+	public synchronized void setSpeed2(byte speed) throws IOException {
 
 		device.write(REG_SPEED2, speed);
 	}
@@ -69,7 +71,7 @@ public final class MD25Motor {
 	 * @param accelerationRate
 	 * @throws IOException 
 	 */
-	public void setAccelRate(byte accelerationRate) throws IOException {
+	public synchronized void setAccelRate(byte accelerationRate) throws IOException {
 
 		device.write(REG_ACCELERATION_RATE, accelerationRate);
 	}
@@ -79,7 +81,7 @@ public final class MD25Motor {
 	 * @return encoder count
 	 * @throws IOException
 	 */
-	public int encoder1() throws IOException {
+	public synchronized int encoder1() throws IOException {
 		int enc1a = device.read(REG_ENC1A);	// capture encoder
 		int enc1b = device.read(REG_ENC1B);
 		int enc1c = device.read(REG_ENC1C);
@@ -92,7 +94,7 @@ public final class MD25Motor {
 	 * @return encoder count
 	 * @throws IOException
 	 */
-	public int encoder2() throws IOException {
+	public synchronized int encoder2() throws IOException {
 		int enc2a = device.read(REG_ENC2A);	// capture encoder
 		int enc2b = device.read(REG_ENC2B);
 		int enc2c = device.read(REG_ENC2C);

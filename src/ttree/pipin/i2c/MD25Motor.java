@@ -1,9 +1,16 @@
 package ttree.pipin.i2c;
 
+import static ttree.pipin.i2c.MD25.REG_ACCELERATION_RATE;
+import static ttree.pipin.i2c.MD25.REG_ENC2A;
+import static ttree.pipin.i2c.MD25.REG_MODE;
+import static ttree.pipin.i2c.MD25.REG_SOFTWARE_REVISION;
+import static ttree.pipin.i2c.MD25.REG_SPEED1;
+import static ttree.pipin.i2c.MD25.REG_SPEED2;
+
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import com.pi4j.io.i2c.I2CDevice;
-import static ttree.pipin.i2c.MD25.*;
 
 /**
  * Dual Motor control via MD25
@@ -39,11 +46,13 @@ public final class MD25Motor {
 	}
 
 	/**
-	 * Kepp the MD25 from stopping the motors automatically by reading the 'mode' register
+	 * Read the mode register
+	 * @return the byte value of the mode register
+	 * @throws IOException
 	 */
-	public synchronized void keepAlive() throws IOException {
-
-		device.read(REG_MODE);
+	public synchronized	byte readMode() throws IOException {
+		
+		return (byte)device.read(REG_MODE);
 	}
 	
 	/**
@@ -82,11 +91,10 @@ public final class MD25Motor {
 	 * @throws IOException
 	 */
 	public synchronized int encoder1() throws IOException {
-		int enc1a = device.read(REG_ENC1A);	// capture encoder
-		int enc1b = device.read(REG_ENC1B);
-		int enc1c = device.read(REG_ENC1C);
-		int enc1d = device.read(REG_ENC1D);
-		return ((enc1a << 8 | enc1b) << 8 | enc1c) << 8 | enc1d;
+		final ByteBuffer buffer = ByteBuffer.allocate(4);
+		device.read(REG_ENC2A, buffer.array(), 0, 4);	// capture encoder
+		buffer.flip();
+		return buffer.getInt();
 	}
 
 	/**
@@ -95,11 +103,10 @@ public final class MD25Motor {
 	 * @throws IOException
 	 */
 	public synchronized int encoder2() throws IOException {
-		int enc2a = device.read(REG_ENC2A);	// capture encoder
-		int enc2b = device.read(REG_ENC2B);
-		int enc2c = device.read(REG_ENC2C);
-		int enc2d = device.read(REG_ENC2D);
-		return ((enc2a << 8 | enc2b) << 8 | enc2c) << 8 | enc2d;
+		final ByteBuffer buffer = ByteBuffer.allocate(4);
+		device.read(REG_ENC2A, buffer.array(), 0, 4);	// capture encoder
+		buffer.flip();
+		return buffer.getInt();
 	}
 
 }

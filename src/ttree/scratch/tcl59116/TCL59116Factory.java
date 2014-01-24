@@ -2,7 +2,6 @@ package ttree.scratch.tcl59116;
 
 import java.io.IOException;
 
-import ttree.pipin.i2c.LEDPWM;
 import ttree.scratch.I2CRemoteSensorFactory;
 import ttree.scratch.IncomingMessage;
 import ttree.scratch.OutgoingMessage;
@@ -20,9 +19,12 @@ public class TCL59116Factory implements I2CRemoteSensorFactory {
 	public IncomingMessage make(OutgoingMessage messageHandler, I2CDevice device) {
 		
 		try {
-			final LEDPWM leds = new LEDPWM(device);
-			return new TCL59116Remote(messageHandler, leds);
-		} catch (IOException e) {
+			final TCL59116Remote tcl59116Remote = new TCL59116Remote(messageHandler, device);
+			tcl59116Remote.init();
+			
+			return tcl59116Remote;
+		}
+		catch (IOException e) {
 			TCL59116Remote.log.severe("TCL59116 not responsing on I2C bus: " + e.getMessage());
 			return null;
 		}

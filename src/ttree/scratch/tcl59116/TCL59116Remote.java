@@ -7,6 +7,8 @@ import ttree.pipin.i2c.LEDPWM;
 import ttree.scratch.IncomingMessage;
 import ttree.scratch.OutgoingMessage;
 
+import com.pi4j.io.i2c.I2CDevice;
+
 /**
  * Remote sensor for MD25 motor controller
  * 
@@ -17,11 +19,21 @@ public class TCL59116Remote implements IncomingMessage {
 	final static Logger log = Logger.getLogger("TCL59116Remote");
 
 	final OutgoingMessage messageHandler;
-	final LEDPWM leds;
+	final I2CDevice device;
 	
-	public TCL59116Remote(OutgoingMessage messageHandler, LEDPWM leds) {
+	LEDPWM leds = null;		// uninitialised
+	
+	public TCL59116Remote(OutgoingMessage messageHandler, I2CDevice device) {
 		this.messageHandler = messageHandler;
-		this.leds = leds;
+		this.device = device;
+	}
+
+	/**
+	 * Initialise device
+	 * @throws IOException 
+	 */
+	void init() throws IOException {
+		leds = new LEDPWM(device);
 	}
 
 	@Override

@@ -8,6 +8,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.logging.Logger;
 
+import com.pi4j.io.i2c.I2CDevice;
+
+import ttree.pipin.i2c.MD25;
 import ttree.pipin.i2c.MD25Motor;
 import ttree.scratch.IncomingMessage;
 import ttree.scratch.OutgoingMessage;
@@ -22,7 +25,9 @@ public class MD25Remote implements IncomingMessage {
 	final static Logger log = Logger.getLogger("MD25Remote");
 
 	final OutgoingMessage messageHandler;
-	final MD25Motor motors;
+	final I2CDevice device;
+	
+	MD25Motor motors = null;	// unitialised
 	
 	final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<Integer>(2);
 	
@@ -30,9 +35,18 @@ public class MD25Remote implements IncomingMessage {
 	Future<?> encoderTask = null;
 
 
-	public MD25Remote(OutgoingMessage messageHandler, MD25Motor motors) {
+	public MD25Remote(OutgoingMessage messageHandler, I2CDevice device) {
 		this.messageHandler = messageHandler;
-		this.motors = motors;
+		this.device = device;
+	}
+	
+	/**
+	 * Initialise the mode and MD25 parameters
+	 * @throws IOException 
+	 */
+	void init() throws IOException {
+		motors = new MD25Motor(device, 1, (byte)MD25.MODE_1);
+		motors.setAccelRate((byte)10);
 	}
 
 	@Override
@@ -48,7 +62,8 @@ public class MD25Remote implements IncomingMessage {
 		switch (what) {
 		case "MOT":
 			try {
-				motors.keepAlive();
+				 // Keep the MD25 from stopping the motors automatically by reading the 'mode' register
+				 motors.readMode();
 			}
 			catch (IOException e) {
 				log.warning("MOT keep alive: " + e.getMessage());
@@ -121,6 +136,11 @@ public class MD25Remote implements IncomingMessage {
 
 			// everything validated - change the motor speed
 			try {
+				// validate the MD25 has not been reset
+				if (motors.readMode() != (byte)MD25.MODE_1) {
+					throw new IOException("MD25 was reset");
+				}
+				
 				if (motor == 1) {
 					motors.setSpeed1((byte)speed);
 				}

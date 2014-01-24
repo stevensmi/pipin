@@ -97,10 +97,14 @@ public class ScratchRobo implements IncomingMessage {
 		final OutgoingMessages messageHandler = new OutgoingMessages();
 		
 		final IncomingMessage md25 = new MD25Factory().make(messageHandler, device_md25);
-		remoteSensors.add(md25);
+		if (md25 != null) {
+			remoteSensors.add(md25);
+		}
 
 		final IncomingMessage leds = new TCL59116Factory().make(messageHandler, device_tcl59116);
-		remoteSensors.add(leds);
+		if (leds != null) {
+			remoteSensors.add(leds);
+		}
 	}
 
 	@Override

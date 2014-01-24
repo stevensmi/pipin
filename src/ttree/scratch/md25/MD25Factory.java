@@ -2,8 +2,6 @@ package ttree.scratch.md25;
 
 import java.io.IOException;
 
-import ttree.pipin.i2c.MD25;
-import ttree.pipin.i2c.MD25Motor;
 import ttree.scratch.I2CRemoteSensorFactory;
 import ttree.scratch.IncomingMessage;
 import ttree.scratch.OutgoingMessage;
@@ -21,11 +19,12 @@ public class MD25Factory implements I2CRemoteSensorFactory {
 	public IncomingMessage make(OutgoingMessage messageHandler, I2CDevice device) {
 		
 		try {
-			final MD25Motor motors = new MD25Motor(device, 1, (byte)MD25.MODE_1);
-			motors.setAccelRate((byte)10);
+			MD25Remote md25Remote = new MD25Remote(messageHandler, device);
+			md25Remote.init();
 			
-			return new MD25Remote(messageHandler, motors);
-		} catch (IOException e) {
+			return md25Remote;
+		}
+		catch (IOException e) {
 			MD25Remote.log.severe("MD25 not responsing on I2C bus: " + e.getMessage());
 			return null;
 		}

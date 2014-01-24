@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.logging.Logger;
 
+import ttree.pipin.i2c.MD25;
 import ttree.pipin.i2c.MD25Motor;
 import ttree.scratch.OutgoingMessage;
 
@@ -17,7 +18,7 @@ public class MD25Encoder implements Runnable {
 
 	final static Logger log = Logger.getLogger("MD25Encoder");
 	
-	private final MD25Motor md25Motor;
+	private final MD25Motor motors;
 	private final int pollMillis;
 	private final AtomicReferenceArray<Integer> positionDemand;
 	
@@ -26,16 +27,16 @@ public class MD25Encoder implements Runnable {
 	/**
 	 * Construct regular encoder reading with polling delay
 	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
-	 * @param md25Motor
+	 * @param motors
 	 * @param poleMillis
 	 */
-	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor md25Motor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
+	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor motors, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
 
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}
 		this.messageHandler = messageHandler;
-		this.md25Motor = md25Motor;
+		this.motors = motors;
 		this.pollMillis = pollMillis;
 		this.positionDemand = positionDemand;
 	}
@@ -60,11 +61,16 @@ public class MD25Encoder implements Runnable {
 			speedDemand = -128;
 		}
 		
+		// validate the MD25 has not been reset
+		if (motors.readMode() != (byte)MD25.MODE_1) {
+			throw new IOException("MD25 was reset");
+		}
+		
 		if (motor == 1) {
-			md25Motor.setSpeed1((byte)speedDemand);
+			motors.setSpeed1((byte)speedDemand);
 		}
 		else {
-			md25Motor.setSpeed2((byte)speedDemand);
+			motors.setSpeed2((byte)speedDemand);
 		}
 	}
 	
@@ -74,9 +80,9 @@ public class MD25Encoder implements Runnable {
 			
 			try {
 				// read encoders and update position control
-				final int encoder1 = md25Motor.encoder1();
+				final int encoder1 = motors.encoder1();
 				position(1, encoder1);
-				final int encoder2 = md25Motor.encoder2();
+				final int encoder2 = motors.encoder2();
 				position(2, encoder2);
 				
 				// send sensor update to scratch 

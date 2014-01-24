@@ -18,14 +18,17 @@ public class TCL59116Remote implements IncomingMessage {
 
 	final static Logger log = Logger.getLogger("TCL59116Remote");
 
-	final OutgoingMessage messageHandler;
-	final I2CDevice device;
+	@SuppressWarnings("unused")
+	private final OutgoingMessage messageHandler;
+	private final I2CDevice device;
+	private final int firstLED;
+
+	private LEDPWM leds = null;		// uninitialised
 	
-	LEDPWM leds = null;		// uninitialised
-	
-	public TCL59116Remote(OutgoingMessage messageHandler, I2CDevice device) {
+	public TCL59116Remote(OutgoingMessage messageHandler, I2CDevice device, final int firstLED) {
 		this.messageHandler = messageHandler;
 		this.device = device;
+		this.firstLED = firstLED;
 	}
 
 	/**
@@ -54,8 +57,8 @@ public class TCL59116Remote implements IncomingMessage {
 				return;
 			}
 
-			if (led < 1 || led > 16) {
-				log.warning("LED number range 1..16: " + name);
+			if (led < firstLED || led > (firstLED + 15)) {
+				log.warning("LED number range " + firstLED + ".." + (firstLED + 15) + ": " + name);
 				return;
 			}
 
@@ -79,7 +82,7 @@ public class TCL59116Remote implements IncomingMessage {
 
 			// everything validated - change the led PWM value
 			try {
-				leds.pwm(led-1, ledValue);
+				leds.pwm(led-firstLED, ledValue);
 			} catch (IOException e) {
 				log.warning("LED cannot change pwm: " + e.getMessage());
 			}

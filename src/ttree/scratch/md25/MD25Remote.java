@@ -24,10 +24,11 @@ public class MD25Remote implements IncomingMessage {
 
 	final static Logger log = Logger.getLogger("MD25Remote");
 
-	final OutgoingMessage messageHandler;
-	final I2CDevice device;
+	private final OutgoingMessage messageHandler;
+	private final I2CDevice device;
+	private final int firstMotor;
 	
-	MD25Motor motors = null;	// unitialised
+	private MD25Motor motors = null;	// unitialised
 	
 	final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<Integer>(2);
 	
@@ -35,9 +36,10 @@ public class MD25Remote implements IncomingMessage {
 	Future<?> encoderTask = null;
 
 
-	public MD25Remote(OutgoingMessage messageHandler, I2CDevice device) {
+	public MD25Remote(OutgoingMessage messageHandler, I2CDevice device, int firstMotor) {
 		this.messageHandler = messageHandler;
 		this.device = device;
+		this.firstMotor = firstMotor;
 	}
 	
 	/**
@@ -75,7 +77,7 @@ public class MD25Remote implements IncomingMessage {
 			if (textScanner.hasNextInt() == true) {
 				poll = textScanner.nextInt();
 				boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
-				final MD25Encoder md25Encoder = new MD25Encoder((sensorUpdates ? messageHandler : null), motors, poll, positionDemand);
+				final MD25Encoder md25Encoder = new MD25Encoder((sensorUpdates ? messageHandler : null), motors, firstMotor, poll, positionDemand);
 				// cancel previous task
 				if (encoderTask != null) {
 					encoderTask.cancel(true);
@@ -113,8 +115,8 @@ public class MD25Remote implements IncomingMessage {
 				return;
 			}
 
-			if (motor < 1 || motor > 2) {
-				log.warning("MOT number range 1..2: " + name);
+			if (motor < firstMotor || motor > (firstMotor + 1)) {
+				log.warning("MOT number range " + firstMotor + ".." + (firstMotor + 1) + ": " + name);
 				return;
 			}
 

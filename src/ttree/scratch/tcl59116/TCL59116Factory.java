@@ -15,11 +15,21 @@ import com.pi4j.io.i2c.I2CDevice;
  */
 public class TCL59116Factory implements I2CRemoteSensorFactory {
 
+	private final int firstLED;
+	
+	/**
+	 * Factory for a TCL59116Remote
+	 * @param firstLED numeric identifier for the first LED e.g. 1 will result in LED1 to MOT16 being used
+	 */
+	public TCL59116Factory(int firstLED) {
+		this.firstLED = firstLED;
+	}
+
 	@Override
 	public IncomingMessage make(OutgoingMessage messageHandler, I2CDevice device) {
 		
 		try {
-			final TCL59116Remote tcl59116Remote = new TCL59116Remote(messageHandler, device);
+			final TCL59116Remote tcl59116Remote = new TCL59116Remote(messageHandler, device, firstLED);
 			tcl59116Remote.init();
 			
 			return tcl59116Remote;

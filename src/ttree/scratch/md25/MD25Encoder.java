@@ -20,6 +20,7 @@ public class MD25Encoder implements Runnable {
 	
 	private final MD25Motor motors;
 	private final int pollMillis;
+	private final int firstMotor;
 	private final AtomicReferenceArray<Integer> positionDemand;
 	
 	private final OutgoingMessage messageHandler;
@@ -28,15 +29,18 @@ public class MD25Encoder implements Runnable {
 	 * Construct regular encoder reading with polling delay
 	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
 	 * @param motors
+	 * @param firstMotor
 	 * @param poleMillis
+	 * @param positionDemand
 	 */
-	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor motors, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
+	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor motors, int firstMotor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
 
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}
 		this.messageHandler = messageHandler;
 		this.motors = motors;
+		this.firstMotor = firstMotor;
 		this.pollMillis = pollMillis;
 		this.positionDemand = positionDemand;
 	}
@@ -87,7 +91,9 @@ public class MD25Encoder implements Runnable {
 				
 				// send sensor update to scratch 
 				if (messageHandler != null) {
-					messageHandler.sensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
+					messageHandler.sensorUpdate( //
+							"encoder" + firstMotor, String.valueOf(encoder1), //
+							"encoder" + (firstMotor + 1), String.valueOf(encoder2));
 				}
 
 				Thread.sleep(pollMillis);

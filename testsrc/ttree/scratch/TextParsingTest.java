@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 import org.junit.Test;
 
+import ttree.scratch.protocol.TextParsing;
+
 public class TextParsingTest {
 
 	@Test

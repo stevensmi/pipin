@@ -1,4 +1,4 @@
-package ttree.scratch;
+package ttree.scratch.protocol;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

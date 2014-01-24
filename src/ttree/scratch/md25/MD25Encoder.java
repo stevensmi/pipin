@@ -1,10 +1,11 @@
-package ttree.scratch;
+package ttree.scratch.md25;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.logging.Logger;
 
 import ttree.pipin.i2c.MD25Motor;
+import ttree.scratch.OutgoingMessage;
 
 /**
  * Poll the MD25 encoders and send sensor_update
@@ -20,21 +21,20 @@ public class MD25Encoder implements Runnable {
 	private final int pollMillis;
 	private final AtomicReferenceArray<Integer> positionDemand;
 	
-	private final ScratchConnection scratch;
-	private final ScratchRemoteProtocol remoteProtocol = new ScratchRemoteProtocol();
+	private final OutgoingMessage messageHandler;
 	
 	/**
 	 * Construct regular encoder reading with polling delay
-	 * @param scratch	scratch connection for sensor updates or null if only 
+	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
 	 * @param md25Motor
 	 * @param poleMillis
 	 */
-	public MD25Encoder(ScratchConnection scratch, MD25Motor md25Motor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
+	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor md25Motor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
 
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}
-		this.scratch = scratch;
+		this.messageHandler = messageHandler;
 		this.md25Motor = md25Motor;
 		this.pollMillis = pollMillis;
 		this.positionDemand = positionDemand;
@@ -80,10 +80,8 @@ public class MD25Encoder implements Runnable {
 				position(2, encoder2);
 				
 				// send sensor update to scratch 
-				if (scratch != null) {
-					final String updateLine = remoteProtocol.generateSensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
-					scratch.writeLine(updateLine);
-					log.info(updateLine);
+				if (messageHandler != null) {
+					messageHandler.sensorUpdate("encoder1", String.valueOf(encoder1), "encoder2", String.valueOf(encoder2));
 				}
 
 				Thread.sleep(pollMillis);

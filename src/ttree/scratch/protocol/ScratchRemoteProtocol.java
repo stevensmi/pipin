@@ -1,9 +1,11 @@
-package ttree.scratch;
+package ttree.scratch.protocol;
 
 import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+import ttree.scratch.IncomingMessage;
 
 /**
  * Parse and generate the Scratch remote protocol
@@ -32,7 +34,7 @@ public class ScratchRemoteProtocol {
 	 * @param line
 	 * @param remoteCallback
 	 */
-	public void parse(String line, RemoteCallback remoteCallback) {
+	public void parse(String line, IncomingMessage remoteCallback) {
 		
 		logIn.info(line);
 		
@@ -70,7 +72,7 @@ public class ScratchRemoteProtocol {
 				if (value == null) {
 					logIn.warning(SENSOR_UPDATE + " expecting value after: " + name + " in: " + line);
 				}
-				remoteCallback.sensor_update(name, value);
+				remoteCallback.sensorUpdate(name, value);
 			}
 		}
 		else {
@@ -80,11 +82,11 @@ public class ScratchRemoteProtocol {
 
 	/**
 	 * Generate the line for a single broadcast value
-	 * @param broadcast
+	 * @param message
 	 * @return broadcast line
 	 */
-	public String generateBroadcast(String broadcast) {
-		return BROADCAST + TextParsing.quoteIfWs(broadcast);
+	public String generateBroadcast(String message) {
+		return BROADCAST + TextParsing.quoteIfWs(message);
 	}
 	
 	/**

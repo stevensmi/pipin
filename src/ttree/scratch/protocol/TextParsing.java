@@ -1,4 +1,4 @@
-package ttree.scratch;
+package ttree.scratch.protocol;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;

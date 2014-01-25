@@ -89,7 +89,9 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 		
 		@Override
 		public synchronized void broadcast(String message) {
+			
 			final String broadcastLine = remoteProtocol.generateBroadcast(message);
+			RemoteSensors.log.info(broadcastLine);
 			try {
 				scratchRemote.writeLine(broadcastLine);
 			} catch (IOException e) {
@@ -100,7 +102,9 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 
 		@Override
 		public synchronized void sensorUpdate(String... updates) {
+			
 			final String updateLine = remoteProtocol.generateSensorUpdate(updates);
+			RemoteSensors.log.info(updateLine);
 			try {
 				scratchRemote.writeLine(updateLine);
 			} catch (IOException e) {

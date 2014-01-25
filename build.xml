@@ -39,7 +39,7 @@
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
 
     <target name="LEDTest">
-        <jar destfile="LEDTest.jar">
+        <jar destfile="LEDTest.jar" depends="build">
             <manifest>
                 <attribute name="Main-Class" value="ttree.pipin.i2c.LEDTest"/>
                 <attribute name="Class-Path" value=". lib/pi4j-core-0.0.5.jar"/>
@@ -48,7 +48,7 @@
         </jar>
     </target>
 
-    <target name="MD25Test">
+    <target name="MD25Test" depends="build">
         <jar destfile="MD25Test.jar">
             <manifest>
                 <attribute name="Main-Class" value="ttree.pipin.i2c.MD25Test"/>

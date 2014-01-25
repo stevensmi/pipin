@@ -1,4 +1,4 @@
-package ttree.scratch;
+package ttree.scratch.protocol;
 
 import static org.junit.Assert.assertEquals;
 

@@ -22,13 +22,13 @@
         <delete dir="bin"/>
     </target>
 
-	<target depends="clean" name="cleanall"/>
+	<target name="cleanall" depends="clean"/>
 
-	<target depends="build-subprojects,build-project" name="build"/>
+	<target name="build" depends="build-subprojects,build-project"/>
 	
     <target name="build-subprojects"/>
 
-	<target depends="init" name="build-project">
+	<target name="build-project" depends="init">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
@@ -38,7 +38,27 @@
 
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
 
-    <target name="ScratchRobo" depends="build">
+    <target name="LEDTest">
+        <jar destfile="LEDTest.jar">
+            <manifest>
+                <attribute name="Main-Class" value="ttree.pipin.i2c.LEDTest"/>
+                <attribute name="Class-Path" value=". lib/pi4j-core-0.0.5.jar"/>
+            </manifest>
+            <fileset dir="bin"/>
+        </jar>
+    </target>
+
+    <target name="MD25Test">
+        <jar destfile="MD25Test.jar">
+            <manifest>
+                <attribute name="Main-Class" value="ttree.pipin.i2c.MD25Test"/>
+                <attribute name="Class-Path" value=". lib/pi4j-core-0.0.5.jar"/>
+            </manifest>
+            <fileset dir="bin"/>
+        </jar>
+    </target>
+
+	<target name="ScratchRobo" depends="build">
         <jar destfile="ScratchRobo.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="ttree.scratch.ScratchRobo"/>

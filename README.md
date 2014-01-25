@@ -83,6 +83,14 @@ In principle this command simple runs the LEDTest class out of the JAR file. How
 its JAR file needs to be available in the "lib" folder. For this to access the /dev/i2c-1 device it needs to use a native Linux library
  which is also in the "lib" folder.
 
+Running Pipin to test the motors from Java
+------------------------------------------
+
+MD25Test tests both motors attached to the MD25. It simply prompts for a speed between -128 and 127 and then sets both motors to that speed.
+After 2s the motors will be stopped again automatically by the MD25. 
+
+	java -jar MD25Test.jar
+
 
 Compiling Pipin
 ---------------

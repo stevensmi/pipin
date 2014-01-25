@@ -67,7 +67,7 @@ public class ScratchRemoteProtocol {
 					break;
 				}
 				
-				final Scanner valueScannehttps://github.com/stevensmi/pipinr = new Scanner(afterName);
+				final Scanner valueScanner = new Scanner(afterName);
 				final String value = TextParsing.nextText(valueScanner);
 				if (value == null) {
 					logIn.warning(SENSOR_UPDATE + " expecting value after: " + name + " in: " + line);

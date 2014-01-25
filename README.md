@@ -115,7 +115,7 @@ Additional software
 	Pi4J
 	----
 	Pipin builds on the work of the Pi4J project. This does all the hard work of providing a simple Java interface
-	to the i2c-device. To get this lowlever access Pi4J consists of two parts: a java library "pi4j-core", and the
+	to the i2c-device. To get this low level access Pi4J consists of two parts: a java library "pi4j-core", and the
 	native Linux library "libpi4j.so". Both of these are included directly in Pipin for ease of use. Thanks for the
 	Pi4J developers for their hard work. Pi4J is licensed under "The Apache Software License, Version 2.0".
 	

@@ -1,5 +1,5 @@
 Pipin - an IO and device control project for the Raspberry Pi
-================================
+=============================================================
 
 16 channel LED control using a TLC59116
 ---------------------------------------
@@ -132,6 +132,19 @@ This can be done with the following configuration changes.
 		Create a file "/etc/udev/rules.d/20-i2c_dev.rules" containing:
 			KERNEL=="i2c-1", GROUP="users", MODE="0660"
 
+Scratch - providing remote sensors
+----------------------------------
+
+Scratch is a wonderful graphically programming systems for beginners. It easy to use on the Raspberry Pi, slow but a lot of fun.
+Scratch has a "Remote Sensors Protocol" see http://wiki.scratch.mit.edu/wiki/Remote_Sensors_Protocol. With this it is possible to program 
+real sensors, such as LED and motors, and not just cat icons!
+
+It is fairly easy in Java to implement the scratch remote sensor protocol so outputs can be changed and inputs read. Remote sensors have
+been implemented for both LEDs and the Motors. An example which automatically connects to scratch and sets up the two I2C devices is provided
+in 'ttree.scratch.ScratchRobo'. The command line and code are fairly self explanatory if you wish to experiment!
+
+
+
 Additional software
 -------------------
 
@@ -147,4 +160,25 @@ Development
 
 Pipin is available on GitHub. 
 	https://github.com/stevensmi/pipin
+	
+Copyright
+---------
+Copyright 2013,2014 Michael Stevens
+
+License
+-------
+    This file is part of ttree distribution.
+
+    ttree is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    ttree is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with ttree.  If not, see <http://www.gnu.org/licenses/>.
     

@@ -93,6 +93,7 @@ public final class MD25Motor {
 	public synchronized int encoder1() throws IOException {
 		final ByteBuffer buffer = ByteBuffer.allocate(4);
 		device.read(REG_ENC2A, buffer.array(), 0, 4);	// capture encoder
+		buffer.position(4);
 		buffer.flip();
 		return buffer.getInt();
 	}
@@ -105,6 +106,7 @@ public final class MD25Motor {
 	public synchronized int encoder2() throws IOException {
 		final ByteBuffer buffer = ByteBuffer.allocate(4);
 		device.read(REG_ENC2A, buffer.array(), 0, 4);	// capture encoder
+		buffer.position(4);
 		buffer.flip();
 		return buffer.getInt();
 	}

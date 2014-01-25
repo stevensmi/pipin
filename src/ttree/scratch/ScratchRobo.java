@@ -14,8 +14,10 @@ import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
-/*
+/**
  * Scratch remote for robot control with a MD25 motor controller and an TCL59116 KED driver
+ * 
+ * @author Michael Stevens
  */
 public class ScratchRobo  {
 

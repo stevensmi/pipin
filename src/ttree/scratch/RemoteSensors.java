@@ -7,10 +7,12 @@ import java.util.logging.Logger;
 import ttree.scratch.protocol.ScratchConnection;
 import ttree.scratch.protocol.ScratchRemoteProtocol;
 
-/*
+/**
  * Scratch remote sensors
  *
  * Provider support for multiple remote sensors with a single scratch connection
+ * 
+ * @author Michael Stevens
  */
 public class RemoteSensors implements IncomingMessage, Runnable {
 

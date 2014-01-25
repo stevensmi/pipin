@@ -8,6 +8,11 @@ import org.junit.Test;
 
 import ttree.scratch.protocol.TextParsing;
 
+/**
+ * Support for WS and quoted text
+ *  
+ * @author Michael Stevens
+ */
 public class TextParsingTest {
 
 	@Test

@@ -9,7 +9,7 @@ import com.pi4j.io.i2c.I2CFactory;
 /**
  * Test LEDS driven by TLC59116 attached to I2C bus
  * 
- * @author michael
+ * @author Michael Stevens
  */
 public class LEDTest {
 

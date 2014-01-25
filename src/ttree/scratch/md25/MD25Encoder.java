@@ -35,6 +35,7 @@ public class MD25Encoder implements Runnable {
 	 */
 	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor motors, int firstMotor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
 
+		log.info("Construct" + (messageHandler != null));
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}
@@ -80,8 +81,9 @@ public class MD25Encoder implements Runnable {
 	
 	@Override
 	public void run() {
-		while (true) {
-			
+		
+		log.info("Start" + (messageHandler != null));
+		while (true) {	
 			try {
 				// read encoders and update position control
 				final int encoder1 = motors.encoder1();

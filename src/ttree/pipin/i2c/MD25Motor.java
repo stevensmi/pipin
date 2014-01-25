@@ -1,11 +1,6 @@
 package ttree.pipin.i2c;
 
-import static ttree.pipin.i2c.MD25.REG_ACCELERATION_RATE;
-import static ttree.pipin.i2c.MD25.REG_ENC2A;
-import static ttree.pipin.i2c.MD25.REG_MODE;
-import static ttree.pipin.i2c.MD25.REG_SOFTWARE_REVISION;
-import static ttree.pipin.i2c.MD25.REG_SPEED1;
-import static ttree.pipin.i2c.MD25.REG_SPEED2;
+import static ttree.pipin.i2c.MD25.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -92,7 +87,7 @@ public final class MD25Motor {
 	 */
 	public synchronized int encoder1() throws IOException {
 		final ByteBuffer buffer = ByteBuffer.allocate(4);
-		device.read(REG_ENC2A, buffer.array(), 0, 4);	// capture encoder
+		device.read(REG_ENC1A, buffer.array(), 0, 4);	// capture encoder
 		buffer.position(4);
 		buffer.flip();
 		return buffer.getInt();

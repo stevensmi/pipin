@@ -30,24 +30,24 @@ public class ScratchRobo  {
 
 		int address_md25 = -1;
 		int address_tcl59116 = -1;
-		if (args.length == 2) {
+		if (args.length == 3) {
 			try {
-				address_md25 = Integer.parseInt(args[0], 16);
-				address_tcl59116 = Integer.parseInt(args[1], 16);
+				address_md25 = Integer.parseInt(args[1], 16);
+				address_tcl59116 = Integer.parseInt(args[2], 16);
 			}
 			catch (NumberFormatException nfe) {
 				; // ignore
 			}
 		}
 		if (address_md25 == -1 || address_tcl59116 == -1) {
-			log.info("Usage: <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device");
+			log.info("Usage: <server> <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device");
 			return;
 		}
 
 		log.info("Connecting to scratch remote sensor");
 		final ScratchConnection scratchRemote;
 		try {
-			scratchRemote = new ScratchConnection();
+			scratchRemote = new ScratchConnection(args[0]);
 		}
 		catch (IOException e) {
 			log.warning("No connection to scratch remote sensor: " + e.getMessage());

@@ -26,11 +26,11 @@ public class ScratchConnection {
 	/**
 	 * Construct sensor socket, blocking to accept a connection
 	 */
-	public ScratchConnection() throws IOException {
+	public ScratchConnection(String server) throws IOException {
 
 		sc = SocketChannel.open();
 		
-		sc.connect(new InetSocketAddress("localhost", SENSOR_PORT));
+		sc.connect(new InetSocketAddress(server, SENSOR_PORT));
 		sc.configureBlocking(true);
 	}
 	

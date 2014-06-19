@@ -9,6 +9,12 @@ package ttree.pipin.i2c;
  */
 public class TLC59116 {
 	
+	public static final int CONTROLAI_NO = 0x00;
+	public static final int CONTROLAI_ALL = 0x80;
+	public static final int CONTROLAI_INDIVIDUAL_ONLY = 0xA0;
+	public static final int CONTROLAI_GLOBAL_ONLY = 0xC0;
+	public static final int CONTROLAI_INDIVIDUAL_AND_GLOBAL = 0xE0;
+	
 	public static final int REG_MODE1 = 0x00;
 	public static final int REG_MODE2 = 0x01;
 	public static final int REG_PWM_x = 0x02;

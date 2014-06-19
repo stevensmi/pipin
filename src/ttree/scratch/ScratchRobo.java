@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import ttree.scratch.RemoteSensors.OutgoingMessages;
 import ttree.scratch.md25.MD25Factory;
 import ttree.scratch.protocol.ScratchConnection;
-import ttree.scratch.tcl59116.TCL59116Factory;
+import ttree.scratch.tlc59116.TLC59116Factory;
 
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -74,7 +74,7 @@ public class ScratchRobo  {
 				remoteSensors.add(md25);
 			}
 
-			final IncomingMessage leds = new TCL59116Factory(1).make(messageHandler, device_tcl59116);
+			final IncomingMessage leds = new TLC59116Factory(1).make(messageHandler, device_tcl59116);
 			if (leds != null) {
 				remoteSensors.add(leds);
 			}

@@ -35,16 +35,15 @@ public final class LEDPWM {
 		}
 
 		device.write(TLC59116.REG_MODE1, (byte)0x0); // OSC On
-
 	}
 	
 	/**
 	 * Set the PWM output value of a LED
-	 * @param led
-	 * @param value
+	 * @param led to output to
+	 * @param value the PWM value
 	 * @throws IOException device error
 	 */
-	public synchronized void pwm(int led, int value) throws IOException {
+	public synchronized void pwm(int led, byte value) throws IOException {
 		if (led < 0 || led > 15) {
 			throw new IllegalArgumentException("led range 0..15 " + led);
 		}
@@ -52,6 +51,18 @@ public final class LEDPWM {
 			throw new IllegalArgumentException("value range 0..255 " + value);
 		}
 		device.write(TLC59116.REG_PWM_x + led, (byte)value);
+	}
+	
+	/**
+	 * Set the PWM output value of all the LEDs
+	 * @param values
+	 * @throws IOException device error
+	 */
+	public synchronized void pwmAll(byte[] values) throws IOException {
+		if (values.length > TLC59116.LEDS) {
+			throw new IllegalArgumentException("values length");
+		}
+		device.write(TLC59116.CONTROLAI_INDIVIDUAL_ONLY + TLC59116.REG_PWM_x, values, 0, values.length);
 	}
 	
 }

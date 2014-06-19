@@ -1,4 +1,4 @@
-package ttree.scratch.tcl59116;
+package ttree.scratch.tlc59116;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ import com.pi4j.io.i2c.I2CDevice;
  * 
  * @author Michael Stevens
  */
-public class TCL59116Remote implements IncomingMessage {
+public class TLC59116Remote implements IncomingMessage {
 
 	final static Logger log = Logger.getLogger("TCL59116Remote");
 
@@ -25,7 +25,7 @@ public class TCL59116Remote implements IncomingMessage {
 
 	private LEDPWM leds = null;		// uninitialised
 	
-	public TCL59116Remote(OutgoingMessage messageHandler, I2CDevice device, final int firstLED) {
+	public TLC59116Remote(OutgoingMessage messageHandler, I2CDevice device, final int firstLED) {
 		this.messageHandler = messageHandler;
 		this.device = device;
 		this.firstLED = firstLED;
@@ -82,7 +82,7 @@ public class TCL59116Remote implements IncomingMessage {
 
 			// everything validated - change the led PWM value
 			try {
-				leds.pwm(led-firstLED, ledValue);
+				leds.pwm(led-firstLED, (byte)ledValue);
 			} catch (IOException e) {
 				log.warning("LED cannot change pwm: " + e.getMessage());
 			}

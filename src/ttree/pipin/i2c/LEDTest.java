@@ -62,7 +62,7 @@ public class LEDTest {
 			// output pwm to all active leds
 			for (int led = 0; led != active_leds.length; ++led) {
 				if (active_leds[led] == true) {
-					ledpwm.pwm(led, pwm);
+					ledpwm.pwm(led, (byte)pwm);
 				}
 			}
 		}

@@ -40,7 +40,7 @@ public class ScratchRobo  {
 			}
 		}
 		if (address_md25 == -1 || address_tcl59116 == -1) {
-			log.info("Usage: <server> <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device");
+			log.info("Usage: <server> <MD25 hex address> <TCL59116 hex address> where addresses are decimal and the I2C address on bus 1 of the device\n Use 0 if the device is not present.");
 			return;
 		}
 
@@ -55,31 +55,35 @@ public class ScratchRobo  {
 			return;
 		}
 
-		// build remoteSensors from the command line 
-		final List<IncomingMessage> remoteSensors = new LinkedList<IncomingMessage>();
-		
 		// scratch remote parse and sensor output
+		final List<IncomingMessage> remoteSensors = new LinkedList<IncomingMessage>();
+		final OutgoingMessages messageHandler = new OutgoingMessages(scratchRemote);
+		
+		// build remoteSensors from the command line 
 		try {
 			// RPi external I2C bus
 			final I2CBus piExtBus = I2CFactory.getInstance(1);
 
-			// Devices
-			final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
-			final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
-
-			final OutgoingMessages messageHandler = new OutgoingMessages(scratchRemote);
+			// MD25 motor controller
+			if (address_md25 != 0) {
+				final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
+				final IncomingMessage md25 = new MD25Factory(1).make(messageHandler, device_md25);
+				if (md25 != null) {
+					remoteSensors.add(md25);
+				}
+			}
 			
-			final IncomingMessage md25 = new MD25Factory(1).make(messageHandler, device_md25);
-			if (md25 != null) {
-				remoteSensors.add(md25);
-			}
+			// TCL59116 LED driver
+			if (address_tcl59116 != 0) {
+				final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
 
-			final IncomingMessage leds = new TLC59116Factory(1).make(messageHandler, device_tcl59116);
-			if (leds != null) {
-				remoteSensors.add(leds);
+				final IncomingMessage leds = new TLC59116Factory(1).make(messageHandler, device_tcl59116);
+				if (leds != null) {
+					remoteSensors.add(leds);
+				}
 			}
-
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			log.warning("Cannot connect to i2c sensor: " + e.getMessage());
 			System.exit(2);	// signal no connection to i2c
 			return;

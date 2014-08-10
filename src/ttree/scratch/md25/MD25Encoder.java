@@ -1,6 +1,7 @@
 package ttree.scratch.md25;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.logging.Logger;
 
@@ -18,30 +19,34 @@ public class MD25Encoder implements Runnable {
 
 	final static Logger log = Logger.getLogger("MD25Encoder");
 	
-	private final MD25Motor motors;
 	private final int pollMillis;
+	private final AtomicInteger watchdog;
+	private final OutgoingMessage messageHandler;
 	private final int firstMotor;
+	private final MD25Motor motors;
 	private final AtomicReferenceArray<Integer> positionDemand;
 	
-	private final OutgoingMessage messageHandler;
+	private final static int watchdogStopAt = 500; // stop after 0.5s
 	
 	/**
 	 * Construct regular encoder reading with polling delay
-	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
-	 * @param motors
-	 * @param firstMotor
 	 * @param poleMillis
-	 * @param positionDemand
+	 * @param watchdog
+	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
+	 * @param firstEncoder
+	 * @param motors
+	 * @param positionDemand	position demand to control, values are Integer or null if no position control is required
 	 */
-	public MD25Encoder(OutgoingMessage messageHandler, MD25Motor motors, int firstMotor, int pollMillis, AtomicReferenceArray<Integer> positionDemand) {
+	public MD25Encoder(int pollMillis, AtomicInteger watchdog, OutgoingMessage messageHandler, int firstEncoder, MD25Motor motors, AtomicReferenceArray<Integer> positionDemand) {
 
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
 		}
-		this.messageHandler = messageHandler;
-		this.motors = motors;
-		this.firstMotor = firstMotor;
 		this.pollMillis = pollMillis;
+		this.watchdog = watchdog;
+		this.messageHandler = messageHandler;
+		this.firstMotor = firstEncoder;
+		this.motors = motors;
 		this.positionDemand = positionDemand;
 	}
 
@@ -50,10 +55,10 @@ public class MD25Encoder implements Runnable {
 		if (demand == null) {
 			return;
 		}
-		
+
 		// position demand is set
 		int offset = encoderValue - demand;
-		
+
 		// proportional control with unity gain
 		int speedDemand = -offset;
 
@@ -64,12 +69,12 @@ public class MD25Encoder implements Runnable {
 		else if (speedDemand < -128) {
 			speedDemand = -128;
 		}
-		
+
 		// validate the MD25 has not been reset
 		if (motors.readMode() != (byte)MD25.MODE_1) {
 			throw new IOException("MD25 was reset");
 		}
-		
+
 		if (motor == 1) {
 			motors.setSpeed1((byte)speedDemand);
 		}
@@ -83,6 +88,14 @@ public class MD25Encoder implements Runnable {
 		
 		while (true) {			
 			try {
+				// watchdog time exceeded stop motors
+				if (watchdog.get() > watchdogStopAt) {
+					motors.setSpeed1((byte)0);
+					motors.setSpeed2((byte)0);
+					Thread.sleep(pollMillis);
+					continue;
+				}
+
 				// read encoders and update position control
 				final int encoder1 = motors.encoder1();
 				position(1, encoder1);
@@ -97,6 +110,7 @@ public class MD25Encoder implements Runnable {
 				}
 
 				Thread.sleep(pollMillis);
+				watchdog.addAndGet(pollMillis);
 			} catch (IOException e) {
 				log.severe("MD25 encoder reading error: " + e.getMessage());
 				break;

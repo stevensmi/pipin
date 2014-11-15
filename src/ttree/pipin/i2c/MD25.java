@@ -1,9 +1,9 @@
 package ttree.pipin.i2c;
 
 /**
- * I2C Register definition for the MD25 board
+ * I2C Register definition for the MD25 board.
  * 
- * The MD25 is a I2C interfaced dual DC motor control board
+ * The MD25 is a I2C interfaced dual DC motor control board.
  * Supplier: Robot Electronics (Daventech) UK
  * Specification: 12v 2.8A Dual H-Bridge
  *

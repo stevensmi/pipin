@@ -5,9 +5,9 @@ import java.io.IOException;
 import com.pi4j.io.i2c.I2CDevice;
 
 /**
- * LED PWM control via TLC59116
+ * LED PWM control via TLC59116.
  * 
- * I2C reads and writes are synchronized to allow thread safe access
+ * I2C reads and writes are synchronized to allow thread safe access.
  * 
  * @author Michael Stevens
  */

@@ -8,9 +8,9 @@ import java.nio.ByteBuffer;
 import com.pi4j.io.i2c.I2CDevice;
 
 /**
- * Dual Motor control via MD25
+ * Dual Motor control via MD25.
  * 
- * I2C reads and writes are synchronized to allow thread safe access
+ * I2C reads and writes are synchronized to allow thread safe access.
  * 
  * @author Michael Stevens
  */

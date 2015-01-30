@@ -19,28 +19,34 @@ public final class MD25Motor {
 	private final I2CDevice device;
 	
 	/**
-	 * Initialize the MD25 into the given mode.
+	 * Construct form I2C device..
 	 * @param device on I2C bus
-	 * @param revision minimum revision of MD25
-	 * @param mode MD25 mode
-	 * @throws IOException bus or device error
 	 */
-	public MD25Motor(I2CDevice device, int revision, byte mode) throws IOException {
+	public MD25Motor(I2CDevice device) {
 
 		this.device = device;
-		
-		int actualRevision = device.read(REG_SOFTWARE_REVISION);
-		if (actualRevision <= revision) {
-			throw new IllegalStateException("MD25 actual revision: " + actualRevision + " below required revision:" + revision);
-		}
-
-		if (mode < 0 || mode > 3) {
-			throw new IllegalArgumentException("MD25 mode must be 0..3");
-		}
-		device.write(REG_MODE, mode);
 	}
 
-	/**
+    /**
+     * Setup the MD25 into the given mode.
+     * @param revision minimum revision of MD25
+     * @param mode MD25 mode
+     * @throws IOException bus or device error
+     */
+    public synchronized void setup(int revision, byte mode) throws IOException {
+
+        int actualRevision = device.read(REG_SOFTWARE_REVISION);
+        if (actualRevision <= revision) {
+            throw new IllegalStateException("MD25 actual revision: " + actualRevision + " below required revision:" + revision);
+        }
+
+        if (mode < 0 || mode > 3) {
+            throw new IllegalArgumentException("MD25 mode must be 0..3");
+        }
+        device.write(REG_MODE, mode);
+    }
+
+    /**
 	 * Read the mode register.
 	 * @return the byte value of the mode register
 	 * @throws IOException

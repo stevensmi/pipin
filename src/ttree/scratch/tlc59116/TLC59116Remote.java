@@ -6,34 +6,33 @@ import java.util.logging.Logger;
 import ttree.pipin.i2c.LEDPWM;
 import ttree.scratch.IncomingMessage;
 
-import com.pi4j.io.i2c.I2CDevice;
-
 /**
- * Remote sensor for MD25 motor controller
+ * Remote sensor for TLC59116 LED driver,
  * 
  * @author Michael Stevens
  */
 public class TLC59116Remote implements IncomingMessage {
 
-	final static Logger log = Logger.getLogger("TCL59116Remote");
+	final private Logger log = Logger.getLogger("TCL59116Remote");
 
-	private final I2CDevice device;
 	private final int firstLED;
-
-	private LEDPWM leds = null;		// uninitialised
+	private final LEDPWM leds;
 	
-	public TLC59116Remote(I2CDevice device, final int firstLED) {
-		this.device = device;
+	public TLC59116Remote(LEDPWM leds, final int firstLED) {
+		this.leds = leds;
 		this.firstLED = firstLED;
 	}
 
 	/**
-	 * Initialise device
-	 * @throws IOException 
+	 * Initialise the device.
 	 */
-	void init() throws IOException {
-		leds = new LEDPWM(device);
-	}
+	void init() {
+        try {
+            leds.setup();
+        } catch (IOException e) {
+            log.severe("TCL59116 not responsing on I2C bus: " + e.getMessage());
+        }
+    }
 
 	@Override
 	public void broadcast(String message) {

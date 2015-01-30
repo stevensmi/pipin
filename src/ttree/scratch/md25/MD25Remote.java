@@ -14,22 +14,18 @@ import ttree.pipin.i2c.MD25Motor;
 import ttree.scratch.IncomingMessage;
 import ttree.scratch.OutgoingMessage;
 
-import com.pi4j.io.i2c.I2CDevice;
-
 /**
- * Remote sensor for MD25 motor controller
+ * Remote sensor for MD25 motor controller.
  * 
  * @author Michael Stevens
  */
 public class MD25Remote implements IncomingMessage {
 
-	final static Logger log = Logger.getLogger("MD25Remote");
+	final private Logger log = Logger.getLogger("MD25Remote");
 
 	private final OutgoingMessage messageHandler;
-	private final I2CDevice device;
 	private final int firstMotor;
-	
-	private MD25Motor motors = null;	// unitialised
+	private final MD25Motor md25;
 	
 	private final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<>(2);
     private final AtomicInteger watchdog = new AtomicInteger(0);
@@ -38,20 +34,31 @@ public class MD25Remote implements IncomingMessage {
     private Future<?> encoderTask = null;
 
 
-	public MD25Remote(OutgoingMessage messageHandler, I2CDevice device, int firstMotor) {
-		this.messageHandler = messageHandler;
-		this.device = device;
+    /**
+     * Construct remote sensor.
+     * @param messageHandler handler for outgoing messages
+     * @param md25 MD25 motor controller
+     * @param firstMotor numeric identifier for the first motor e.g. 1 will result in MOT1 and MOT2 being used
+     */
+	public MD25Remote(OutgoingMessage messageHandler, MD25Motor md25, int firstMotor) {
+        this.messageHandler = messageHandler;
+		this.md25 = md25;
 		this.firstMotor = firstMotor;
 	}
 	
 	/**
-	 * Initialise the mode and MD25 parameters
-	 * @throws IOException 
+	 * Initialise the mode and MD25 parameters.
 	 */
-	void init() throws IOException {
-		motors = new MD25Motor(device, 1, MD25.MODE_1);
-		motors.setAccelRate((byte)10);
-	}
+	void init() {
+        try {
+            md25.setup(1, MD25.MODE_1);
+            md25.setAccelRate((byte) 10);
+        }
+        catch (IOException e) {
+            log.severe("MD25 not responding on I2C bus: " + e.getMessage());
+        }
+
+    }
 
 	@Override
 	public void broadcast(String message) {
@@ -64,11 +71,11 @@ public class MD25Remote implements IncomingMessage {
             final String what = textScanner.next();
             switch (what) {
                 case "MOT":
-// reset the position control watchdog
+                    // reset the position control watchdog
                     watchdog.set(0);
                     try {
-// Keep the MD25 from stopping the motors automatically by reading the 'mode' register
-                        motors.readMode();
+                        // Keep the MD25 from stopping the motors automatically by reading the 'mode' register
+                        md25.readMode();
                     } catch (IOException e) {
                         log.warning("MOT keep alive: " + e.getMessage());
                     }
@@ -80,19 +87,19 @@ public class MD25Remote implements IncomingMessage {
                         poll = textScanner.nextInt();
                         boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
 
-// disable position demand
+                        // disable position demand
                         positionDemand.set(0, null);
                         positionDemand.set(1, null);
 
-// cancel previous task
+                        // cancel previous task
                         if (encoderTask != null) {
                             log.info("canceling");
                             encoderTask.cancel(true);
                             log.info("canceled");
                         }
 
-// new task
-                        final MD25Encoder md25Encoder = new MD25Encoder(poll, watchdog, (sensorUpdates ? messageHandler : null), firstMotor, motors, positionDemand);
+                        // new task
+                        final MD25Encoder md25Encoder = new MD25Encoder(poll, watchdog, (sensorUpdates ? messageHandler : null), firstMotor, md25, positionDemand);
                         encoderTask = encoderExecutor.submit(md25Encoder);
                         log.info("ENC motor encoders are being polled every " + poll + "ms, task=" + encoderTask);
                     } else {
@@ -107,7 +114,7 @@ public class MD25Remote implements IncomingMessage {
                     }
                     break;
                 default:
-// ignore unknown broadcast
+                    // ignore unknown broadcast
             }
         }
 
@@ -150,15 +157,15 @@ public class MD25Remote implements IncomingMessage {
 			// everything validated - change the motor speed
 			try {
 				// validate the MD25 has not been reset
-				if (motors.readMode() != MD25.MODE_1) {
+				if (md25.readMode() != MD25.MODE_1) {
 					throw new IOException("MD25 was reset");
 				}
 				
 				if (motor == 1) {
-					motors.setSpeed1((byte)speed);
+					md25.setSpeed1((byte) speed);
 				}
 				else {
-					motors.setSpeed2((byte)speed);
+					md25.setSpeed2((byte) speed);
 				}
 
 				// speed set, disable position demand

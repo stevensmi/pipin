@@ -16,28 +16,33 @@ public final class LEDPWM {
 	private final I2CDevice device;
 	
 	/**
-	 * Initialise the TLC59116 so all LED outputs are in PWM mode with 0 output.
-	 * @param device on I2C bus
-	 * @throws IOException bus or device error
+	 * Construct from I2c device.
 	 */
-	public LEDPWM(I2CDevice device) throws IOException {
+	public LEDPWM(I2CDevice device) {
 
 		this.device = device;
-
-		for (int led = 0; led != 16; ++led) {
-			device.write(TLC59116.REG_PWM_x + led, (byte)0);
-		}
-
-		// PWM mode for LED
-		final byte PWM_mode = (byte)0xAA;
-		for (int out_group = 0; out_group != 4; ++out_group) {
-			device.write(TLC59116.REG_LEDOUT_x + out_group, PWM_mode);
-		}
-
-		device.write(TLC59116.REG_MODE1, (byte)0x0); // OSC On
 	}
-	
-	/**
+
+    /**
+     * Initialise the TLC59116 so all LED outputs are in PWM mode with 0 output.
+     * @throws IOException bus or device error
+     */
+    public void setup() throws IOException {
+
+        for (int led = 0; led != 16; ++led) {
+            device.write(TLC59116.REG_PWM_x + led, (byte)0);
+        }
+
+        // PWM mode for LED
+        final byte PWM_mode = (byte)0xAA;
+        for (int out_group = 0; out_group != 4; ++out_group) {
+            device.write(TLC59116.REG_LEDOUT_x + out_group, PWM_mode);
+        }
+
+        device.write(TLC59116.REG_MODE1, (byte)0x0); // OSC On
+    }
+
+    /**
 	 * Set the PWM output value of a LED.
 	 * @param led to output to
 	 * @param value the PWM value

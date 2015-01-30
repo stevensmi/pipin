@@ -15,7 +15,7 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 /**
- * Scratch remote for robot control with a MD25 motor controller and an TCL59116 KED driver
+ * Scratch remote for robot control with a MD25 motor controller and an TCL59116 LED driver.
  * 
  * @author Michael Stevens
  */
@@ -24,7 +24,7 @@ public class ScratchRobo  {
     private final static Logger log = Logger.getLogger("ScratchRobo");
 
 	/**
-	 * Main for Scratch remote sensor support
+	 * Main for Scratch remote sensor support.
 	 */
 	public static void main(String[] args) {
 
@@ -68,9 +68,7 @@ public class ScratchRobo  {
 			if (address_md25 != 0) {
 				final I2CDevice device_md25 = piExtBus.getDevice(address_md25);
 				final IncomingMessage md25 = new MD25Factory(1).make(messageHandler, device_md25);
-				if (md25 != null) {
-					remoteSensors.add(md25);
-				}
+				remoteSensors.add(md25);
 			}
 			
 			// TCL59116 LED driver
@@ -78,9 +76,7 @@ public class ScratchRobo  {
 				final I2CDevice device_tcl59116 = piExtBus.getDevice(address_tcl59116);
 
 				final IncomingMessage leds = new TLC59116Factory(1).make(messageHandler, device_tcl59116);
-				if (leds != null) {
-					remoteSensors.add(leds);
-				}
+				remoteSensors.add(leds);
 			}
 		}
 		catch (IOException e) {

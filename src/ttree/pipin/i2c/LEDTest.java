@@ -14,7 +14,7 @@ import com.pi4j.io.i2c.I2CFactory;
 public class LEDTest {
 
 	/**
-	 * Main for LED Test
+	 * Main for LED Test.
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {

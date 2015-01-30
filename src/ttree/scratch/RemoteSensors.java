@@ -96,7 +96,7 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 			try {
 				scratchRemote.writeLine(broadcastLine);
 			} catch (IOException e) {
-				log.warning("Scratch remote not recieving messages");
+				log.warning("Scratch remote not receiving messages");
 			}
 			
 		}
@@ -109,7 +109,7 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 			try {
 				scratchRemote.writeLine(updateLine);
 			} catch (IOException e) {
-				log.warning("Scratch remote not recieving messages");
+				log.warning("Scratch remote not receiving messages");
 			}
 		}
 		

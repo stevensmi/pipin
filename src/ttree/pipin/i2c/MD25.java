@@ -41,7 +41,7 @@ public class MD25 {
 	public static final byte CMD_AUTO_SPEED_DISABLE	= 0x30; // Disables automatic speed regulation
 	public static final byte CMD_AUTO_SPEED_ENABLE	= 0x31;	// Enables automatic speed regulation (default)
 	public static final byte CMD_TIMEOUT_DISABLE	= 0x32;	// Disables 2 second timeout of motors (Version 2 onwards only)
-	public static final byte CMD_TIMEOUT_ENABLE		= 0x33;	// Enables 2 second timeout of motors when no I2C comms (default) (Version 2 onwards only)
+	public static final byte CMD_TIMEOUT_ENABLE		= 0x33;	// Enables 2 second timeout of motors when no I2C communications (default) (Version 2 onwards only)
 	public static final byte CMD_CHANGE_I2C_ADDR_1	= (byte)0xA0;	// 1st in sequence to change I2C address
 	public static final byte CMD_CHANGE_I2C_ADDR_2	= (byte)0xAA;	// 2nd in sequence to change I2C address
 	public static final byte CMD_CHANGE_I2C_ADDR_3	= (byte)0xA5;	// 3rd in sequence to change I2C address

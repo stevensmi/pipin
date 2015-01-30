@@ -3,7 +3,7 @@ package ttree.scratch;
 import com.pi4j.io.i2c.I2CDevice;
 
 /**
- * Standarised factory for remote sensors which are a single device on an I2C bus.
+ * Standardised factory for remote sensors which are a single device on an I2C bus.
  * 
  * @author Michael Stevens
  */

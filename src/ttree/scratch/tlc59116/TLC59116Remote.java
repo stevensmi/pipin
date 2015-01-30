@@ -30,7 +30,7 @@ public class TLC59116Remote implements IncomingMessage {
         try {
             leds.setup();
         } catch (IOException e) {
-            log.severe("TCL59116 not responsing on I2C bus: " + e.getMessage());
+            log.severe("TCL59116 not responding on I2C bus: " + e.getMessage());
         }
     }
 

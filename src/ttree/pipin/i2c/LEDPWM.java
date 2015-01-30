@@ -16,7 +16,7 @@ public final class LEDPWM {
 	private final I2CDevice device;
 	
 	/**
-	 * Initialise the TLC59116 so all LED outputs are in PWM mode with 0 output
+	 * Initialise the TLC59116 so all LED outputs are in PWM mode with 0 output.
 	 * @param device on I2C bus
 	 * @throws IOException bus or device error
 	 */
@@ -38,7 +38,7 @@ public final class LEDPWM {
 	}
 	
 	/**
-	 * Set the PWM output value of a LED
+	 * Set the PWM output value of a LED.
 	 * @param led to output to
 	 * @param value the PWM value
 	 * @throws IOException device error
@@ -47,15 +47,12 @@ public final class LEDPWM {
 		if (led < 0 || led > 15) {
 			throw new IllegalArgumentException("led range 0..15 " + led);
 		}
-		if (value < 0 || value > 255) {
-			throw new IllegalArgumentException("value range 0..255 " + value);
-		}
-		device.write(TLC59116.REG_PWM_x + led, (byte)value);
+		device.write(TLC59116.REG_PWM_x + led, value);
 	}
 	
 	/**
-	 * Set the PWM output value of all the LEDs
-	 * @param values
+	 * Set the PWM output value of all the LEDs.
+	 * @param values PWM value array
 	 * @throws IOException device error
 	 */
 	public synchronized void pwmAll(byte[] values) throws IOException {

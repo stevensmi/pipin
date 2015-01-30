@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
- * Support for WS and quoted text
+ * Support for white space and quoted text.
  *  
  * @author Michael Stevens
  */
@@ -13,8 +13,8 @@ public class TextParsing {
 	private static final Pattern quotePattern = Pattern.compile("\"");
 	
 	/**
-	 * Place double quote around text if it contains a WS
-	 * @param text
+	 * Place double quote around text if it contains a white space.
+	 * @param text text to parse
 	 * @return text which is quoted if necessary
 	 */
 	public static String quoteIfWs(String text) {
@@ -29,9 +29,9 @@ public class TextParsing {
 	}
 	
 	/**
-	 * 
-	 * @param scanner
-	 * @return
+	 * Setup scanner to use a quote as pattern.
+	 * @param scanner scanner to setup
+	 * @return next text or null if there is no more text
 	 */
 	public static String quotedText(Scanner scanner) {
 		scanner.useDelimiter(quotePattern);
@@ -44,8 +44,8 @@ public class TextParsing {
 	
 	
 	/**
-	 * Determine the next WS delimited text item in a scanner
-	 * @param scanner
+	 * Determine the next white space delimited text item in a scanner.
+	 * @param scanner scanner to use
 	 * @return the text or null if there is no more text
 	 */
 	public static String nextText(Scanner scanner) {

@@ -8,7 +8,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 
 /**
- * Scratch remote sensor support over a TCP/IP socket
+ * Scratch remote sensor support over a TCP/IP socket.
  * 
  * @author Michael Stevens
  */
@@ -16,15 +16,15 @@ public class ScratchConnection {
 
 	public static final int SENSOR_PORT = 42001;
 	
-	private static Charset charset = Charset.forName("ISO-8859-1");
+	private static final Charset charset = Charset.forName("ISO-8859-1");
 	
 	/**
-	 * The socket connected to Scratch
+	 * The socket connected to Scratch.
 	 */
 	private final SocketChannel sc;
 
 	/**
-	 * Construct sensor socket, blocking to accept a connection
+	 * Construct sensor socket, blocking to accept a connection.
 	 */
 	public ScratchConnection(String server) throws IOException {
 
@@ -35,8 +35,8 @@ public class ScratchConnection {
 	}
 	
 	/**
-	 * Write a single line to the sensor socket
-	 * @param outLine
+	 * Write a single line to the sensor socket.
+	 * @param outLine line to output
 	 * @throws IOException 
 	 */
 	public void writeLine(String outLine) throws IOException {
@@ -51,7 +51,7 @@ public class ScratchConnection {
 	}
 	
 	/**
-	 * Read a single line from the sensor socket
+	 * Read a single line from the sensor socket.
 	 * @return a line or null if socket closed
 	 * @throws IOException 
 	 */
@@ -75,7 +75,7 @@ public class ScratchConnection {
 		data.flip();
 
 		final CharBuffer line = charset.decode(data);
-		return new StringBuilder(line).toString();
+        return line.toString();
 	}
 	
 	private ByteBuffer readBytes(int num) throws IOException {

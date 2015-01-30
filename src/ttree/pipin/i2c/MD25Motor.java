@@ -19,10 +19,10 @@ public final class MD25Motor {
 	private final I2CDevice device;
 	
 	/**
-	 * Initialize the MD25 into the given mode 
+	 * Initialize the MD25 into the given mode.
 	 * @param device on I2C bus
 	 * @param revision minimum revision of MD25
-	 * @param mode
+	 * @param mode MD25 mode
 	 * @throws IOException bus or device error
 	 */
 	public MD25Motor(I2CDevice device, int revision, byte mode) throws IOException {
@@ -41,7 +41,7 @@ public final class MD25Motor {
 	}
 
 	/**
-	 * Read the mode register
+	 * Read the mode register.
 	 * @return the byte value of the mode register
 	 * @throws IOException
 	 */
@@ -51,8 +51,8 @@ public final class MD25Motor {
 	}
 	
 	/**
-	 * Set the motor 1 speed value
-	 * @param speed
+	 * Set the motor 1 speed value.
+	 * @param speed speed value
 	 * @throws IOException 
 	 */
 	public synchronized void setSpeed1(byte speed) throws IOException {
@@ -61,8 +61,8 @@ public final class MD25Motor {
 	}
 	
 	/**
-	 * Set the motor 2 speed value
-	 * @param speed
+	 * Set the motor 2 speed value.
+	 * @param speed speed value
 	 * @throws IOException 
 	 */
 	public synchronized void setSpeed2(byte speed) throws IOException {
@@ -71,8 +71,8 @@ public final class MD25Motor {
 	}
 	
 	/**
-	 * Set the maximum accelerationRate
-	 * @param accelerationRate
+	 * Set the maximum accelerationRate.
+	 * @param accelerationRate acceleration rate value
 	 * @throws IOException 
 	 */
 	public synchronized void setAccelRate(byte accelerationRate) throws IOException {
@@ -81,7 +81,7 @@ public final class MD25Motor {
 	}
 	
 	/**
-	 * Encoder for the motor 1
+	 * Encoder for the motor 1.
 	 * @return encoder count
 	 * @throws IOException
 	 */
@@ -94,7 +94,7 @@ public final class MD25Motor {
 	}
 
 	/**
-	 * Encoder for the motor 2
+	 * Encoder for the motor 2.
 	 * @return encoder count
 	 * @throws IOException
 	 */

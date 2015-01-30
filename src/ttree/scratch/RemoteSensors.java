@@ -8,9 +8,9 @@ import ttree.scratch.protocol.ScratchConnection;
 import ttree.scratch.protocol.ScratchRemoteProtocol;
 
 /**
- * Scratch remote sensors
+ * Scratch remote sensors.
  *
- * Provider support for multiple remote sensors with a single scratch connection
+ * Provider support for multiple remote sensors with a single scratch connection.
  * 
  * @author Michael Stevens
  */
@@ -22,10 +22,9 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 	final private List<IncomingMessage> remoteSensors;
 
 	/**
-	 * Construct with list of remote sensors to use with scratch
-	 * @param scratchRemote
+	 * Construct with list of remote sensors to use with scratch.
+	 * @param scratchRemote connection to scratch remote
 	 * @param remoteSensors remote sensors for incoming messages
-	 * @throws IOException
 	 */
 	public RemoteSensors(ScratchConnection scratchRemote, List<IncomingMessage> remoteSensors) {
 		
@@ -34,7 +33,7 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 	}
 	
 	/**
-	 * Read incoming messages from scratch and pass it on to the remote sensors
+	 * Read incoming messages from scratch and pass it on to the remote sensors.
 	 */
 	@Override
 	public void run() {
@@ -76,7 +75,7 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 	}
 
 	/**
-	 * Provide support for the outgoing messages 
+	 * Provide support for the outgoing messages.
 	 *
 	 */
 	public static class OutgoingMessages implements OutgoingMessage {
@@ -115,6 +114,5 @@ public class RemoteSensors implements IncomingMessage, Runnable {
 		}
 		
 	}
-
 
 }

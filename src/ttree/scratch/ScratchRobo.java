@@ -21,7 +21,7 @@ import com.pi4j.io.i2c.I2CFactory;
  */
 public class ScratchRobo  {
 
-	final static Logger log = Logger.getLogger("ScratchRobo");
+    private final static Logger log = Logger.getLogger("ScratchRobo");
 
 	/**
 	 * Main for Scratch remote sensor support
@@ -36,7 +36,7 @@ public class ScratchRobo  {
 				address_tcl59116 = Integer.parseInt(args[2], 16);
 			}
 			catch (NumberFormatException nfe) {
-				; // ignore
+				// ignore
 			}
 		}
 		if (address_md25 == -1 || address_tcl59116 == -1) {
@@ -56,7 +56,7 @@ public class ScratchRobo  {
 		}
 
 		// scratch remote parse and sensor output
-		final List<IncomingMessage> remoteSensors = new LinkedList<IncomingMessage>();
+		final List<IncomingMessage> remoteSensors = new LinkedList<>();
 		final OutgoingMessages messageHandler = new OutgoingMessages(scratchRemote);
 		
 		// build remoteSensors from the command line 

@@ -31,11 +31,11 @@ public class MD25Remote implements IncomingMessage {
 	
 	private MD25Motor motors = null;	// unitialised
 	
-	final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<Integer>(2);
-	final AtomicInteger watchdog = new AtomicInteger(0);
-	
-	final ExecutorService encoderExecutor = Executors.newSingleThreadExecutor();
-	Future<?> encoderTask = null;
+	private final AtomicReferenceArray<Integer> positionDemand = new AtomicReferenceArray<>(2);
+    private final AtomicInteger watchdog = new AtomicInteger(0);
+
+    private final ExecutorService encoderExecutor = Executors.newSingleThreadExecutor();
+    private Future<?> encoderTask = null;
 
 
 	public MD25Remote(OutgoingMessage messageHandler, I2CDevice device, int firstMotor) {
@@ -49,69 +49,67 @@ public class MD25Remote implements IncomingMessage {
 	 * @throws IOException 
 	 */
 	void init() throws IOException {
-		motors = new MD25Motor(device, 1, (byte)MD25.MODE_1);
+		motors = new MD25Motor(device, 1, MD25.MODE_1);
 		motors.setAccelRate((byte)10);
 	}
 
 	@Override
 	public void broadcast(String message) {
-		
-		@SuppressWarnings("resource")
-		final Scanner textScanner = new Scanner(message);
-		if (textScanner.hasNext() == false) {
-			log.warning("empty broadcast");
-		}
 
-		final String what = textScanner.next();
-		switch (what) {
-		case "MOT":
-			// reset the position control watchdog
-			watchdog.set(0);
-			try {
-				 // Keep the MD25 from stopping the motors automatically by reading the 'mode' register
-				 motors.readMode();
-			}
-			catch (IOException e) {
-				log.warning("MOT keep alive: " + e.getMessage());
-			}
-			break;
+        try (Scanner textScanner = new Scanner(message)) {
+            if (textScanner.hasNext() == false) {
+                log.warning("empty broadcast");
+            }
 
-		case "ENC":
-			final int poll;
-			if (textScanner.hasNextInt() == true) {
-				poll = textScanner.nextInt();
-				boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
-				
-				// disable position demand
-				positionDemand.set(0, null);
-				positionDemand.set(1, null);
+            final String what = textScanner.next();
+            switch (what) {
+                case "MOT":
+// reset the position control watchdog
+                    watchdog.set(0);
+                    try {
+// Keep the MD25 from stopping the motors automatically by reading the 'mode' register
+                        motors.readMode();
+                    } catch (IOException e) {
+                        log.warning("MOT keep alive: " + e.getMessage());
+                    }
+                    break;
 
-				// cancel previous task
-				if (encoderTask != null) {
-					log.info("canceling");
-					encoderTask.cancel(true);
-					log.info("canceled");
-				}
+                case "ENC":
+                    final int poll;
+                    if (textScanner.hasNextInt() == true) {
+                        poll = textScanner.nextInt();
+                        boolean sensorUpdates = textScanner.hasNext() && textScanner.next().equals("UPDATE");
 
-				// new task
-				final MD25Encoder md25Encoder = new MD25Encoder(poll, watchdog, (sensorUpdates ? messageHandler : null), firstMotor, motors, positionDemand);
-				encoderTask = encoderExecutor.submit(md25Encoder);
-				log.info("ENC motor encoders are being polled every " + poll + "ms, task=" + encoderTask);
-			} else {
-				if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
-					if (encoderTask != null) {
-						boolean canceled = encoderTask.cancel(true);
-						log.info("ENC motor encoders are OFF: " + canceled);
-					}
-				}
-				else {
-					log.warning("ENC ignored, expecting integer poll interval or OFF");
-				}
-			}
-			break;
-		default:
-			// ignore unknown broadcast
-		}
+// disable position demand
+                        positionDemand.set(0, null);
+                        positionDemand.set(1, null);
+
+// cancel previous task
+                        if (encoderTask != null) {
+                            log.info("canceling");
+                            encoderTask.cancel(true);
+                            log.info("canceled");
+                        }
+
+// new task
+                        final MD25Encoder md25Encoder = new MD25Encoder(poll, watchdog, (sensorUpdates ? messageHandler : null), firstMotor, motors, positionDemand);
+                        encoderTask = encoderExecutor.submit(md25Encoder);
+                        log.info("ENC motor encoders are being polled every " + poll + "ms, task=" + encoderTask);
+                    } else {
+                        if (textScanner.hasNext() && textScanner.next().equals("OFF")) {
+                            if (encoderTask != null) {
+                                boolean canceled = encoderTask.cancel(true);
+                                log.info("ENC motor encoders are OFF: " + canceled);
+                            }
+                        } else {
+                            log.warning("ENC ignored, expecting integer poll interval or OFF");
+                        }
+                    }
+                    break;
+                default:
+// ignore unknown broadcast
+            }
+        }
 
 	}
 
@@ -152,7 +150,7 @@ public class MD25Remote implements IncomingMessage {
 			// everything validated - change the motor speed
 			try {
 				// validate the MD25 has not been reset
-				if (motors.readMode() != (byte)MD25.MODE_1) {
+				if (motors.readMode() != MD25.MODE_1) {
 					throw new IOException("MD25 was reset");
 				}
 				

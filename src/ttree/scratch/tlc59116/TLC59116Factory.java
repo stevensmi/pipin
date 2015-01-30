@@ -29,7 +29,7 @@ public class TLC59116Factory implements I2CRemoteSensorFactory {
 	public IncomingMessage make(OutgoingMessage messageHandler, I2CDevice device) {
 		
 		try {
-			final TLC59116Remote tcl59116Remote = new TLC59116Remote(messageHandler, device, firstLED);
+			final TLC59116Remote tcl59116Remote = new TLC59116Remote(device, firstLED);
 			tcl59116Remote.init();
 			
 			return tcl59116Remote;

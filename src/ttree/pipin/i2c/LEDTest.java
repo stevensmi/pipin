@@ -37,12 +37,12 @@ public class LEDTest {
 
 		int pwm = 0;
 		boolean up = true;
-		for (;;) {
+		while (Thread.currentThread().isInterrupted() == false)  {
 			if (up == true) {
 				// maximum
 				if (pwm == 255) {
 					// stay on maximum and change direction
-					up = !up;
+					up = false;
 				}
 				else {
 					++pwm;
@@ -52,7 +52,7 @@ public class LEDTest {
 				// minimum
 				if (pwm == 0) {
 					// stay on minimum and change direction
-					up = !up;
+					up = true;
 				}
 				else {
 					--pwm;

@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import ttree.scratch.IncomingMessage;
 
 /**
- * Parse and generate the Scratch remote protocol
- * The broadcast and sensor-update are parsed
+ * Parse and generate the Scratch remote protocol.
+ * The broadcast and sensor-update are parsed.
  *  
  * @author Michael Stevens
  */
@@ -20,19 +20,19 @@ public class ScratchRemoteProtocol {
 
 	private static final int BROADCAST_LEN = BROADCAST.length();
 	private static final int SENSOR_UPDATE_LEN = SENSOR_UPDATE.length();
-	
-	final Logger logIn = Logger.getLogger("FromScratch");
+
+    private final Logger logIn = Logger.getLogger("FromScratch");
 
 	/**
-	 * Construct
+	 * Construct.
 	 */
 	public ScratchRemoteProtocol() {
 	}
 	
 	/**
-	 * Parse a command line and call the remoteCallback with all valid commands
-	 * @param line
-	 * @param remoteCallback
+	 * Parse a command line and call the remoteCallback with all valid commands.
+	 * @param line line from scratch remote
+	 * @param remoteCallback call back to use for remote commands
 	 */
 	public void parse(String line, IncomingMessage remoteCallback) {
 		
@@ -75,14 +75,13 @@ public class ScratchRemoteProtocol {
 				remoteCallback.sensorUpdate(name, value);
 			}
 		}
-		else {
-			; // ignore
-		}
+
+		// ignore line which do not start with expected prefix
 	}
 
 	/**
-	 * Generate the line for a single broadcast value
-	 * @param message
+	 * Generate the line for a single broadcast value.
+	 * @param message message to broadcast
 	 * @return broadcast line
 	 */
 	public String generateBroadcast(String message) {
@@ -90,7 +89,7 @@ public class ScratchRemoteProtocol {
 	}
 	
 	/**
-	 * Generate the line for a list of sensor updates
+	 * Generate the line for a list of sensor updates.
 	 * @param updates - assumed to be pairs of name, values
 	 * @return update line
 	 */

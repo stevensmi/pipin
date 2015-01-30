@@ -10,14 +10,14 @@ import ttree.pipin.i2c.MD25Motor;
 import ttree.scratch.OutgoingMessage;
 
 /**
- * Poll the MD25 encoders and send sensor_update
+ * Poll the MD25 encoders and send sensor_update.
  * Provides position control using encoder readings
  * 
  * @author Michael Stevens
  */
 public class MD25Encoder implements Runnable {
 
-	final static Logger log = Logger.getLogger("MD25Encoder");
+	final private Logger log = Logger.getLogger("MD25Encoder");
 	
 	private final int pollMillis;
 	private final AtomicInteger watchdog;
@@ -29,15 +29,15 @@ public class MD25Encoder implements Runnable {
 	private final static int watchdogStopAt = 500; // stop after 0.5s
 	
 	/**
-	 * Construct regular encoder reading with polling delay
-	 * @param poleMillis
-	 * @param watchdog
+	 * Construct regular encoder reading with polling delay.
+	 * @param pollMillis polling interval
+	 * @param watchdog shared watchdog which should be set to 0 when activity is detected
 	 * @param messageHandler	outgoing message handler or null if no sensor updates are required 
-	 * @param firstEncoder
-	 * @param motors
-	 * @param positionDemand	position demand to control, values are Integer or null if no position control is required
+     * @param firstMotor numeric identifier for the first motor e.g. 1 will result in MOT1 and MOT2 being used
+	 * @param motors MD25 instance to read the encoders from
+	 * @param positionDemand position demand to control, values are Integer or null if no position control is required
 	 */
-	public MD25Encoder(int pollMillis, AtomicInteger watchdog, OutgoingMessage messageHandler, int firstEncoder, MD25Motor motors, AtomicReferenceArray<Integer> positionDemand) {
+	public MD25Encoder(int pollMillis, AtomicInteger watchdog, OutgoingMessage messageHandler, int firstMotor, MD25Motor motors, AtomicReferenceArray<Integer> positionDemand) {
 
 		if (pollMillis < 0) {
 			throw new IllegalArgumentException("pollMillis < 0");
@@ -45,7 +45,7 @@ public class MD25Encoder implements Runnable {
 		this.pollMillis = pollMillis;
 		this.watchdog = watchdog;
 		this.messageHandler = messageHandler;
-		this.firstMotor = firstEncoder;
+		this.firstMotor = firstMotor;
 		this.motors = motors;
 		this.positionDemand = positionDemand;
 	}
@@ -71,7 +71,7 @@ public class MD25Encoder implements Runnable {
 		}
 
 		// validate the MD25 has not been reset
-		if (motors.readMode() != (byte)MD25.MODE_1) {
+		if (motors.readMode() != MD25.MODE_1) {
 			throw new IOException("MD25 was reset");
 		}
 

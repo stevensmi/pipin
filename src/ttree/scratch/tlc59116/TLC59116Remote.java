@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import ttree.pipin.i2c.LEDPWM;
 import ttree.scratch.IncomingMessage;
-import ttree.scratch.OutgoingMessage;
 
 import com.pi4j.io.i2c.I2CDevice;
 
@@ -18,15 +17,12 @@ public class TLC59116Remote implements IncomingMessage {
 
 	final static Logger log = Logger.getLogger("TCL59116Remote");
 
-	@SuppressWarnings("unused")
-	private final OutgoingMessage messageHandler;
 	private final I2CDevice device;
 	private final int firstLED;
 
 	private LEDPWM leds = null;		// uninitialised
 	
-	public TLC59116Remote(OutgoingMessage messageHandler, I2CDevice device, final int firstLED) {
-		this.messageHandler = messageHandler;
+	public TLC59116Remote(I2CDevice device, final int firstLED) {
 		this.device = device;
 		this.firstLED = firstLED;
 	}

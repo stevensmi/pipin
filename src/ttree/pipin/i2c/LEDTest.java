@@ -19,14 +19,8 @@ public class LEDTest {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		System.out.println("Testing LEDs 0,1,2,3");
-		final boolean active_leds[] = new boolean[] { 
-				true, true, true, true,
-				false, false, false,
-				false, false, false,
-				false, false, false,
-				false, false, false
-		};
+		System.out.println("Testing LEDs 0..15");
+		final byte leds[] = new byte[16];
 		
 		// RPi external I2C bus
 		final I2CBus piExtBus = I2CFactory.getInstance(1);
@@ -34,8 +28,10 @@ public class LEDTest {
 		final I2CDevice ledDevice = piExtBus.getDevice(0x6F);
 		
 		final LEDPWM ledpwm = new LEDPWM(ledDevice);
+		ledpwm.setup();
 
 		int pwm = 0;
+		int led = 0;
 		boolean up = true;
 		while (Thread.currentThread().isInterrupted() == false)  {
 			if (up == true) {
@@ -58,13 +54,11 @@ public class LEDTest {
 					--pwm;
 				}
 			}
+			leds[led] = (byte)pwm;
+			led = (led + 1) % leds.length;
 
 			// output pwm to all active leds
-			for (int led = 0; led != active_leds.length; ++led) {
-				if (active_leds[led] == true) {
-					ledpwm.pwm(led, (byte)pwm);
-				}
-			}
+			ledpwm.pwmAll(leds);
 		}
 	}
 

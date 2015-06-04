@@ -1,6 +1,7 @@
 package ttree.pipin.i2c;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -60,6 +61,9 @@ public class LEDTest {
 			// output pwm to all active leds
 			ledpwm.pwmAll(leds);
 		}
+		
+		Arrays.fill(leds, (byte)0);
+		ledpwm.pwmAll(leds);
 	}
 
 }
